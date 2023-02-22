@@ -34,7 +34,7 @@ public class ProductFactory {
             product = sausageRepository.findById(productId)
                     .orElseThrow(DataNotFoundException::new);
 
-        else if(vegetableRepository.existsById(productId))
+        if(vegetableRepository.existsById(productId))
             product = vegetableRepository.findById(productId)
                     .orElseThrow(DataNotFoundException::new);
     }

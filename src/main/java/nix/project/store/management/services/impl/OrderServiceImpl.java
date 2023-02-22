@@ -31,7 +31,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepo;
 
-    private final StoreRepository outletRepo;
+    private final StoreRepository storeRepo;
 
     private final OrderProductRepository orderProductRepo;
 
@@ -39,10 +39,10 @@ public class OrderServiceImpl implements OrderService {
     private ProductFactory productFactory;
 
     @Override
-    public long createEmptyOrder(Long outletId) {
+    public long createEmptyOrder(Long storeId) {
         Order order = new Order();
 
-        order.setStore(outletRepo.findById(outletId)
+        order.setStore(storeRepo.findById(storeId)
                 .orElseThrow(DataNotFoundException::new));
         order.setCreateTime(LocalDateTime.now());
         order.setStatus(OrderStatus.NEW);
@@ -106,9 +106,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getOrdersByOutlet(Long outletId) {
+    public List<OrderDto> getOrdersByStore(Long storeId) {
 
-        return orderRepo.findByStore_Id(outletId)
+        return orderRepo.findByStore_Id(storeId)
                 .stream()
                 .map(OrderMapper.MAPPER::toMap)
                 .toList();

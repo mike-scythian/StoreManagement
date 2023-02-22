@@ -21,9 +21,9 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping
-    public ResponseEntity <Long> createOrder(@RequestBody long outletId){
+    public ResponseEntity <Long> createOrder(@RequestBody long storeId){
 
-        return new ResponseEntity<>(orderService.createEmptyOrder(outletId), HttpStatus.CREATED);
+        return new ResponseEntity<>(orderService.createEmptyOrder(storeId), HttpStatus.CREATED);
     }
 
     @PostMapping("/rows")
@@ -45,9 +45,9 @@ public class OrderController {
     }
 
     @GetMapping("/outlets/{id}")
-    public ResponseEntity <List<OrderDto>> findOrdersByOutlet(@PathVariable long id){
+    public ResponseEntity <List<OrderDto>> findOrdersByStore(@PathVariable long id){
 
-        return new ResponseEntity<>(orderService.getOrdersByOutlet(id), HttpStatus.OK);
+        return new ResponseEntity<>(orderService.getOrdersByStore(id), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

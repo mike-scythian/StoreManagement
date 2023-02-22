@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface OrderService {
 
-    long createEmptyOrder(Long outletId);
+    long createEmptyOrder(Long storeId);
 
     void fillOrder(Long orderId, Map<Long, Double> productList);
 
@@ -22,7 +22,7 @@ public interface OrderService {
 
     List<OrderDto> getOrders();
 
-    List <OrderDto> getOrdersByOutlet(Long outletId);
+    List <OrderDto> getOrdersByStore(Long storeId);
 
     OrderProductDto updateRow(OrderProductDto orderProductDto);
 

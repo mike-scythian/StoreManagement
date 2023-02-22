@@ -34,9 +34,17 @@ public class StoreStock {
     @JoinColumn(name="product_id")
     private Sausage sausage;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JsonBackReference
+    @MapsId("product_id")
+    @JoinColumn(name = "product_id")
+    private Vegetable vegetable;
+
     public <P extends Product> void setProduct(P product) {
         if(product.getClass().equals(Sausage.class))
             this.sausage = (Sausage) product;
+        if (product.getClass().equals(Vegetable.class))
+            this.vegetable = (Vegetable) product;
     }
     public Long storeId(){
         return this.id.getStoreId();
