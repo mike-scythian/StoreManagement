@@ -1,0 +1,14 @@
+server:
+  port: ${RUN-PORT}
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${PGHOST}:${PGPORT}/${PGDATABASE}?currentSchema=${PGSCHEMA}
+    username: ${USER}
+    password: ${PSSWRD}
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+
+jwt-token-secret: ${TOKEN-SECRET}

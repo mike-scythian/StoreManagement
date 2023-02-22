@@ -1,0 +1,82 @@
+package nix.project.store.management.controllers;
+
+import nix.project.store.management.dto.OrderDto;
+import nix.project.store.management.dto.StoreDto;
+import nix.project.store.management.dto.StoreStockDto;
+import nix.project.store.management.dto.UserDto;
+import nix.project.store.management.models.enums.OrderStatus;
+import nix.project.store.management.services.StoreService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
+
+@RestController
+@RequestMapping("/stores")
+public class StoreController {
+
+    @Autowired
+    private StoreService storeService;
+
+
+    @PostMapping
+    public ResponseEntity<Long> createStore(@RequestBody String storeName){
+
+        return new ResponseEntity<>(storeService.create(storeName), HttpStatus.CREATED);
+    }
+    @GetMapping
+    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity< List<StoreDto> > getAllStores(){
+
+        return new ResponseEntity<>(storeService.getStores(), HttpStatus.OK);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<StoreDto> getStore(@PathVariable long id){
+
+        return new ResponseEntity<>(storeService.getStore(id), HttpStatus.OK);
+    }
+    @GetMapping("/{id}/sellers")
+    public ResponseEntity<Set<UserDto> > getSellerSet(@PathVariable long id){
+
+        return new ResponseEntity<>(storeService.getSellers(id), HttpStatus.OK);
+    }
+    @GetMapping("/{id}/orders")
+    public ResponseEntity < List<OrderDto> > getOrderList(@PathVariable long id){
+
+        return new ResponseEntity<>(storeService.getOrders(id), HttpStatus.OK);
+    }
+    @GetMapping("/{id}/stocks")
+    public ResponseEntity < List<StoreStockDto> > getLeftovers(@PathVariable long id){
+
+        return new ResponseEntity<>(storeService.getLeftovers(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity <OrderStatus> acceptOrder(@PathVariable long id){
+
+        return new ResponseEntity<>(storeService.acceptOrder(id), HttpStatus.ACCEPTED);
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateInfo(@PathVariable long id, @RequestBody String newName){
+
+        storeService.update(id, newName);
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+    @PatchMapping("/selling")
+    public ResponseEntity<Double> saleProduct(@RequestBody StoreStockDto storeStockDto){
+
+        return new ResponseEntity<>(storeService.sale(storeStockDto), HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStore(@PathVariable long id){
+
+        storeService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+}
