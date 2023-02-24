@@ -3,18 +3,14 @@ package nix.project.store.management.services;
 import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.OrderProductDto;
 import nix.project.store.management.models.Order;
+import nix.project.store.management.models.compositeKeys.OrderProductKey;
 import nix.project.store.management.models.enums.OrderStatus;
 
 import java.util.List;
-import java.util.Map;
 
 public interface OrderService {
 
-    long createEmptyOrder(Long storeId);
-
-    void fillOrder(Long orderId, Map<Long, Double> productList);
-
-    OrderProductDto addRow(OrderProductDto orderProductDto);
+    OrderProductKey addRow(OrderProductDto orderProductDto);
 
     OrderDto getOrder(Long orderId);
 
@@ -23,8 +19,6 @@ public interface OrderService {
     List<OrderDto> getOrders();
 
     List <OrderDto> getOrdersByStore(Long storeId);
-
-    OrderProductDto updateRow(OrderProductDto orderProductDto);
 
     void delete(Long orderId);
 

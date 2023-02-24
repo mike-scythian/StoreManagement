@@ -21,6 +21,6 @@ public interface SaleHistoryRepository extends JpaRepository<SaleHistory, Long> 
     List<SaleHistory> findByProduct(Long productId);
     List<SaleHistory> findByStore(Long id);
 
-    @Query("SELECT SUM(sh.payment), sh.product FROM SaleHistory sh GROUP BY sh.product")
-    List<ProductTotalPayment> findTopTenProducts();
+   /* @Query("SELECT SUM(sh.payment), sh.productId FROM SaleHistory sh GROUP BY sh.productId")
+    List<ProductTotalPayment> findTopTenProducts();*/
 }

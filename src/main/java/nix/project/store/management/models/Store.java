@@ -1,5 +1,6 @@
 package nix.project.store.management.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,14 +19,14 @@ public class Store {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-    @Column(name = "income")
+
+    private String name;
     private Double income;
     @Column(name = "open_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate openDate;
-    @Column(name = "name")
-    private String name;
+
     @OneToMany(
             mappedBy = "store",
             orphanRemoval = true,

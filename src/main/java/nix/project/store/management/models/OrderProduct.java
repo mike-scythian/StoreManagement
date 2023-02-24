@@ -19,7 +19,6 @@ public class OrderProduct {
     @EmbeddedId
     private OrderProductKey id;
 
-    @Column(name = "quantity")
     private Double quantity;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -32,25 +31,8 @@ public class OrderProduct {
     @JsonBackReference
     @MapsId("product_id")
     @JoinColumn(name = "product_id")
-    private Sausage sausage;
+    private Product product;
 
-    /*@ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JsonBackReference
-    @MapsId("product_id")
-    @JoinColumn(name = "product_id")
-    private Vegetable vegetable;*/
-
-
-    public <P extends Product> void setProduct(P product) {
-        if (product instanceof Sausage) {
-            this.sausage = (Sausage) product;
-     //       this.id.setProductId(sausage.getId());
-        }
-      /*  if (product instanceof Vegetable) {
-            this.vegetable = (Vegetable) product;
-            this.id.setProductId(vegetable.getId());
-        }*/
-    }
 
     public Long getProductId() {
         return this.id.getProductId();

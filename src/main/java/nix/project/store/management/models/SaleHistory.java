@@ -18,7 +18,7 @@ public class SaleHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="product")
+    @Column(name="productId")
     private Long product;
 
     @Column(name="payment")

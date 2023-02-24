@@ -20,5 +20,5 @@ public interface SaleHistoryService {
 
     List<SaleHistoryDto> getByProductForPeriod(Long productId, LocalDateTime startDate, LocalDateTime finishDate);
 
-    List<ProductTotalPayment> getTopTenProducts();
+   // List<ProductTotalPayment> getTopTenProducts();
 }

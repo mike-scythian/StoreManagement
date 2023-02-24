@@ -90,7 +90,6 @@ public class UserServiceImpl implements UserService {
             userEntity.setFirstName(userDto.getFirstName());
         if(userDto.getLastName() != null)
             userEntity.setLastName(userDto.getLastName());
-        userEntity.setEmail(userDto.getEmail());
 
         return UserMapper.MAPPER.toMap(userRepository.save(userEntity));
     }

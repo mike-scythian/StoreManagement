@@ -1,12 +1,10 @@
 package nix.project.store.management.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import nix.project.store.management.models.enums.OrderStatus;
 
 import java.time.LocalDateTime;
@@ -15,18 +13,19 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Entity
-@Data
+@Table(name="orders")
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="orders")
+@Getter
+@Setter
 public class Order{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Long id;
 
     @Column(name = "create_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss")
     private LocalDateTime createTime;
 
     @Column

@@ -71,12 +71,12 @@ public class SaleHistoryServiceImpl implements SaleHistoryService {
                 .toList();
     }
 
-    @Override
+   /* @Override
     public List<ProductTotalPayment> getTopTenProducts() {
 
         return saleHistoryRepository.findTopTenProducts();
 
-    }
+    }*/
 
 
 }

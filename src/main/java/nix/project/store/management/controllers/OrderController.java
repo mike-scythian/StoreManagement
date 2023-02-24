@@ -1,8 +1,14 @@
 package nix.project.store.management.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.OrderProductDto;
+import nix.project.store.management.dto.ProductDto;
+import nix.project.store.management.models.Product;
+import nix.project.store.management.models.compositeKeys.OrderProductKey;
 import nix.project.store.management.models.enums.OrderStatus;
 import nix.project.store.management.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,20 +27,19 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping
-    public ResponseEntity <Long> createOrder(@RequestBody long storeId){
-
-        return new ResponseEntity<>(orderService.createEmptyOrder(storeId), HttpStatus.CREATED);
-    }
+    @Autowired
+    private ObjectMapper jsonMapper;
 
     @PostMapping("/rows")
-    public ResponseEntity <OrderProductDto> createRowInOrder(@RequestBody OrderProductDto orderProductDto){
+    public ResponseEntity <OrderProductKey> createRowInOrder(@RequestBody OrderProductDto productDto){
 
-        return new ResponseEntity<>(orderService.addRow(orderProductDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(orderService.addRow(productDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity <OrderDto> findOrder(@PathVariable long id){
+    public ResponseEntity <OrderDto> findOrder(@PathVariable long id) throws JsonProcessingException {
+
+        String responseJsonString = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orderService.getOrder(id).getProducts());
 
         return new ResponseEntity<>(orderService.getOrder(id), HttpStatus.CREATED);
     }
@@ -50,24 +56,10 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrdersByStore(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity <Void> fillOrder(@PathVariable long id, @RequestBody Map<Long, Double> products){
-
-        orderService.fillOrder(id,products);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
     @PatchMapping("/processing/{id}/")
     public ResponseEntity <OrderStatus> pushOrder(@PathVariable long id){
 
         return new ResponseEntity<>(orderService.pushOrder(id), HttpStatus.ACCEPTED);
-    }
-
-    @PatchMapping("/rows")
-    public ResponseEntity <OrderProductDto> editOrderRow(@RequestBody OrderProductDto orderProductDto){
-
-        return new ResponseEntity<>(orderService.updateRow(orderProductDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

@@ -1,9 +1,6 @@
 package nix.project.store.management.controllers;
 
-import nix.project.store.management.dto.OrderDto;
-import nix.project.store.management.dto.StoreDto;
-import nix.project.store.management.dto.StoreStockDto;
-import nix.project.store.management.dto.UserDto;
+import nix.project.store.management.dto.*;
 import nix.project.store.management.models.enums.OrderStatus;
 import nix.project.store.management.services.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -26,6 +24,12 @@ public class StoreController {
     public ResponseEntity<Long> createStore(@RequestBody String storeName){
 
         return new ResponseEntity<>(storeService.create(storeName), HttpStatus.CREATED);
+    }
+
+    @PostMapping("{id}/orders")
+    public ResponseEntity <OrderDto> createOrder(@RequestBody long storeId){
+
+        return new ResponseEntity<>(storeService.createEmptyOrder(storeId), HttpStatus.CREATED);
     }
     @GetMapping
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -49,7 +53,7 @@ public class StoreController {
         return new ResponseEntity<>(storeService.getOrders(id), HttpStatus.OK);
     }
     @GetMapping("/{id}/stocks")
-    public ResponseEntity < List<StoreStockDto> > getLeftovers(@PathVariable long id){
+    public ResponseEntity <Map<ProductDto,Double>> getLeftovers(@PathVariable long id){
 
         return new ResponseEntity<>(storeService.getLeftovers(id), HttpStatus.OK);
     }

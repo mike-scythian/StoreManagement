@@ -6,22 +6,23 @@ import nix.project.store.management.dto.mapper.*;
 import nix.project.store.management.exceptions.DataNotFoundException;
 import nix.project.store.management.exceptions.NotEnoughLeftoversException;
 import nix.project.store.management.models.Order;
+import nix.project.store.management.models.Product;
 import nix.project.store.management.models.Store;
 import nix.project.store.management.models.StoreStock;
-import nix.project.store.management.models.Product;
 import nix.project.store.management.models.compositeKeys.StoreStockKey;
 import nix.project.store.management.models.enums.OrderStatus;
 import nix.project.store.management.repositories.StoreRepository;
 import nix.project.store.management.repositories.StoreStockRepository;
 import nix.project.store.management.services.OrderService;
+import nix.project.store.management.services.ProductService;
 import nix.project.store.management.services.StoreService;
 import nix.project.store.management.services.SaleHistoryService;
-import nix.project.store.management.utility.ProductFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,10 +35,9 @@ public class StoreServiceImpl implements StoreService {
     private final StoreRepository storeRepository;
     private final StoreStockRepository storeStockRepository;
     private final OrderService orderService;
+    private final ProductService productService;
     private final SaleHistoryService saleHistoryService;
 
-    @Autowired
-    private ProductFactory productFactory;
 
     @Override
     public long create(String name) {
@@ -52,6 +52,18 @@ public class StoreServiceImpl implements StoreService {
                 .build();
 
         return storeRepository.save(store).getId();
+    }
+
+    @Override
+    public OrderDto createEmptyOrder(Long storeId) {
+        Order order = new Order();
+
+        order.setStore(storeRepository.findById(storeId)
+                .orElseThrow(DataNotFoundException::new));
+        order.setCreateTime(LocalDateTime.now());
+        order.setStatus(OrderStatus.NEW);
+
+        return orderService.saveOrder(order);
     }
 
     @Override
@@ -77,20 +89,25 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<StoreStockDto> getLeftovers(Long storeId) {
+    public Map<ProductDto, Double> getLeftovers(Long storeId) {
 
-        return storeRepository.findById(storeId)
-                .orElseThrow(DataNotFoundException::new)
-                .getStoreStock()
-                .stream()
-                .map(StoreStockMapper.MAPPER::toMap)
-                .toList();
+        return StoreMapper.MAPPER.toMap(storeRepository.findById(storeId)
+                .orElseThrow(DataNotFoundException::new))
+                .getLeftovers();
     }
 
     @Override
     public StoreDto getStore(Long storeId) {
+
         return StoreMapper.MAPPER.toMap(storeRepository.findById(storeId)
                 .orElseThrow(DataNotFoundException::new));
+    }
+
+    @Override
+    public Store getStoreEntity(Long storeId){
+
+        return storeRepository.findById(storeId)
+                .orElseThrow(DataNotFoundException::new);
     }
 
     @Override
@@ -101,22 +118,21 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void update(Long storeId, String name) {
+    public StoreDto update(Long storeId, String name) {
 
         Store store = storeRepository.findById(storeId)
                 .orElseThrow(DataNotFoundException::new);
 
         store.setName(Optional.of(name).orElse(store.getName()));
 
-        storeRepository.save(store);
+        return StoreMapper.MAPPER.toMap(storeRepository.save(store));
     }
 
     @Override
     public double sale(StoreStockDto storeStockDto) {
 
-        StoreStock storeStock =
-                storeStockRepository
-                        .findById(new StoreStockKey(storeStockDto.storeId(), storeStockDto.productId()))
+        StoreStock storeStock = storeStockRepository.findById(
+                new StoreStockKey(storeStockDto.storeId(), storeStockDto.productId()))
                         .orElseThrow(DataNotFoundException::new);
 
         if (storeStockDto.quantity() > storeStock.getLeftovers())
@@ -126,16 +142,17 @@ public class StoreServiceImpl implements StoreService {
 
         Store store = storeRepository.findById(storeStockDto.storeId())
                 .orElseThrow(DataNotFoundException::new);
-        Product product = getProduct(storeStockDto.productId());
 
-        double resultIncome = store.getIncome() + product.getPrice() * storeStockDto.quantity();
+        double productPrice = productService.getProduct(storeStockDto.productId()).getPrice();
+
+        double resultIncome = store.getIncome() + productPrice * storeStockDto.quantity();
         store.setIncome(resultIncome);
         storeStock.setLeftovers(storeStock.getLeftovers() - storeStockDto.quantity());
         storeStockRepository.save(storeStock);
 
         saleHistoryService.createReport(
                 storeStockDto.productId(),
-                product.getPrice() * storeStockDto.quantity(),
+                productPrice * storeStockDto.quantity(),
                 storeStockDto.storeId());
 
         return storeRepository.save(store).getIncome();
@@ -150,7 +167,7 @@ public class StoreServiceImpl implements StoreService {
 
         Set<StoreStock> stockSet = order.getOrderBody().stream()
                 .map(OrderProductMapper.MAPPER::toMap)
-                .map(orderProd -> fromOrderToStock(storeId, orderProd))
+                .map(orderProd -> pushOrderToStore(storeId, orderProd))
                 .collect(Collectors.toSet());
 
         storeStockRepository.saveAll(stockSet);
@@ -165,23 +182,26 @@ public class StoreServiceImpl implements StoreService {
         if (storeRepository.existsById(storeId)) {
 
             List<StoreStock> stockList = storeStockRepository.findByStore_Id(storeId);
+
             storeStockRepository.deleteAll(stockList);
             storeRepository.deleteById(storeId);
         } else
             throw new DataNotFoundException();
     }
 
-    private StoreStock fromOrderToStock(Long storeId, OrderProductDto orderProductDto) {
+    private StoreStock pushOrderToStore(Long storeId, OrderProductDto orderProductDto) {
 
         StoreStockKey key = new StoreStockKey(storeId, orderProductDto.productId());
         StoreStock storeStockRow = new StoreStock();
+
         if (storeStockRepository.existsById(key))
             storeStockRow = storeStockRepository.findById(key)
                     .orElseThrow(DataNotFoundException::new);
 
         else {
+            Product product = ProductMapper.MAPPER.toEntityMap(productService.getProduct(orderProductDto.productId()));
             storeStockRow.setId(key);
-            storeStockRow.setProduct(getProduct(orderProductDto.productId()));
+            storeStockRow.setProduct(product);
             storeStockRow.setStore(storeRepository.findById(storeId)
                     .orElseThrow(DataNotFoundException::new));
         }
@@ -204,9 +224,4 @@ public class StoreServiceImpl implements StoreService {
         storeStockRepository.saveAll(stockList);
     }
 
-    private Product getProduct(Long productId) {
-
-        productFactory.defineProduct(productId);
-        return productFactory.getProduct();
-    }
 }
