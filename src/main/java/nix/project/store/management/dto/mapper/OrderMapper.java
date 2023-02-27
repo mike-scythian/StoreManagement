@@ -34,7 +34,7 @@ public interface OrderMapper {
                         order.getOrderBody()
                                 .stream()
                                 .collect(Collectors
-                                        .toMap(k->ProductMapper.MAPPER.toMap(k.getProduct()),OrderProduct::getQuantity))))
+                                        .toMap(OrderProduct::getProductId,OrderProduct::getQuantity))))
                 .build();
     }
 }

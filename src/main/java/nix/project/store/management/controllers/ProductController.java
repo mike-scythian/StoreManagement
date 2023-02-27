@@ -5,6 +5,8 @@ import nix.project.store.management.dto.ProductCreateDto;
 import nix.project.store.management.dto.ProductDto;
 import nix.project.store.management.services.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +34,11 @@ public class ProductController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
+    public ResponseEntity<List<ProductDto>> getAllProducts(@RequestParam int page) {
 
-        return new ResponseEntity<>(productService.getProducts(), HttpStatus.CREATED);
+        Pageable pageable = PageRequest.of(page,3);
+
+        return new ResponseEntity<>(productService.getProducts(pageable), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")

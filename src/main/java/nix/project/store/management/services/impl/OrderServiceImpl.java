@@ -15,6 +15,7 @@ import nix.project.store.management.repositories.OrderProductRepository;
 import nix.project.store.management.repositories.OrderRepository;
 import nix.project.store.management.services.OrderService;
 import nix.project.store.management.services.ProductService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -65,18 +66,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getOrders() {
+    public List<OrderDto> getOrders(Pageable pageable) {
 
-        return orderRepo.findAll()
+        return orderRepo.findAll(pageable)
                 .stream()
                 .map(order -> getOrder(order.getId()))
                 .toList();
     }
 
     @Override
-    public List<OrderDto> getOrdersByStore(Long storeId) {
+    public List<OrderDto> getOrdersByStore(Long storeId, Pageable pageable) {
 
-        return orderRepo.findByStore_Id(storeId)
+        return orderRepo.findByStore_Id(storeId, pageable)
                 .stream()
                 .map(OrderMapper.MAPPER::toMap)
                 .toList();

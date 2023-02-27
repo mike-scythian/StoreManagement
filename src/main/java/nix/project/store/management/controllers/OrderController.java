@@ -3,22 +3,19 @@ package nix.project.store.management.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.OrderProductDto;
-import nix.project.store.management.dto.ProductDto;
-import nix.project.store.management.models.Product;
 import nix.project.store.management.models.compositeKeys.OrderProductKey;
 import nix.project.store.management.models.enums.OrderStatus;
 import nix.project.store.management.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/orders")
@@ -45,15 +42,19 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity <List<OrderDto>> findOrders(){
+    public ResponseEntity <List<OrderDto>> findOrders(@RequestParam int page){
 
-        return  new ResponseEntity<>(orderService.getOrders(), HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page,5);
+
+        return  new ResponseEntity<>(orderService.getOrders(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/outlets/{id}")
-    public ResponseEntity <List<OrderDto>> findOrdersByStore(@PathVariable long id){
+    public ResponseEntity <List<OrderDto>> findOrdersByStore(@PathVariable long id, @RequestParam int page){
 
-        return new ResponseEntity<>(orderService.getOrdersByStore(id), HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page,10);
+
+        return new ResponseEntity<>(orderService.getOrdersByStore(id, pageable), HttpStatus.OK);
     }
 
     @PatchMapping("/processing/{id}/")

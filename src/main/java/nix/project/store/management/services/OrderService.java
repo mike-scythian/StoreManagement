@@ -5,6 +5,7 @@ import nix.project.store.management.dto.OrderProductDto;
 import nix.project.store.management.models.Order;
 import nix.project.store.management.models.compositeKeys.OrderProductKey;
 import nix.project.store.management.models.enums.OrderStatus;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -16,9 +17,9 @@ public interface OrderService {
 
     Order getOrderEntity(Long orderId);
 
-    List<OrderDto> getOrders();
+    List<OrderDto> getOrders(Pageable pageable);
 
-    List <OrderDto> getOrdersByStore(Long storeId);
+    List <OrderDto> getOrdersByStore(Long storeId, Pageable pageable);
 
     void delete(Long orderId);
 

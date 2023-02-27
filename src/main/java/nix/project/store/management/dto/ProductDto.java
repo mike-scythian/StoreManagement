@@ -23,26 +23,5 @@ public class ProductDto {
     private Units units;
     private String type;
 
-    @Override
-    @JsonValue
-    public String toString(){
 
-        ObjectMapper jsonMapper = new ObjectMapper();
-        ObjectNode jsonNodes = jsonMapper.createObjectNode();
-
-        jsonNodes.put("id", id);
-        jsonNodes.put("name", name);
-        jsonNodes.put("price", price);
-        jsonNodes.put("units", units.toString());
-        jsonNodes.put("type", type);
-
-        try {
-            return  jsonMapper
-                    .writeValueAsString(jsonNodes);
-        } catch (JsonProcessingException e) {
-            System.out.println(e.getMessage());
-        }
-
-        return this.toString();
-    }
 }
