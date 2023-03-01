@@ -17,12 +17,12 @@ import nix.project.store.management.services.OrderService;
 import nix.project.store.management.services.ProductService;
 import nix.project.store.management.services.StoreService;
 import nix.project.store.management.services.SaleHistoryService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -89,11 +89,16 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public Map<ProductDto, Double> getLeftovers(Long storeId) {
+    public List<ProductRowDto> getLeftovers(Long storeId) {
 
-        return StoreMapper.MAPPER.toMap(storeRepository.findById(storeId)
-                .orElseThrow(DataNotFoundException::new))
-                .getLeftovers();
+        Store store = storeRepository.findById(storeId).orElseThrow(DataNotFoundException::new);
+
+        return store.getStoreStock().stream()
+                .map(row -> new ProductRowDto(
+                        productService.getProduct(row.productId()).getName(),
+                        productService.getProduct(row.productId()).getType(),
+                        row.getLeftovers()))
+                .toList();
     }
 
     @Override
@@ -111,8 +116,8 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<StoreDto> getStores() {
-        return storeRepository.findAll().stream()
+    public List<StoreDto> getStores(Pageable pageable) {
+        return storeRepository.findAll(pageable).stream()
                 .map(StoreMapper.MAPPER::toMap)
                 .toList();
     }

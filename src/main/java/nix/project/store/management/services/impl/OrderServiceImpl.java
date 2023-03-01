@@ -3,6 +3,7 @@ package nix.project.store.management.services.impl;
 import lombok.RequiredArgsConstructor;
 import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.OrderProductDto;
+import nix.project.store.management.dto.ProductRowDto;
 import nix.project.store.management.dto.mapper.OrderMapper;
 import nix.project.store.management.dto.mapper.ProductMapper;
 import nix.project.store.management.exceptions.DataNotFoundException;
@@ -60,6 +61,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<ProductRowDto> getOrderBody(Long orderId) {
+        Order order = orderRepo.findById(orderId).orElseThrow(DataNotFoundException::new);
+
+        return order.getOrderBody().stream()
+                .map(row -> new ProductRowDto(
+                        productService.getProduct(row.getProductId()).getName(),
+                        productService.getProduct(row.getProductId()).getType(),
+                        row.getQuantity()))
+                .toList();
+    }
+
+    @Override
     public Order getOrderEntity(Long orderId) {
         return orderRepo.findById(orderId)
                 .orElseThrow(DataNotFoundException::new);
@@ -89,9 +102,13 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepo.findById(orderId)
                 .orElseThrow(DataNotFoundException::new);
 
-        order.setStatus(OrderStatus.IN_PROCESSING);
+        if (order.getStatus() == OrderStatus.NEW) {
 
-        return orderRepo.save(order).getStatus();
+            order.setStatus(OrderStatus.IN_PROCESSING);
+            return orderRepo.save(order).getStatus();
+
+        } else
+            return order.getStatus();
     }
 
     @Override

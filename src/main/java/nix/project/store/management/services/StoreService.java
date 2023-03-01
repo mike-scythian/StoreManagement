@@ -3,9 +3,9 @@ package nix.project.store.management.services;
 import nix.project.store.management.dto.*;
 import nix.project.store.management.models.Store;
 import nix.project.store.management.models.enums.OrderStatus;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public interface StoreService {
@@ -16,12 +16,12 @@ public interface StoreService {
 
     List<OrderDto> getOrders(Long storeId);
 
-    Map<ProductDto,Double> getLeftovers(Long storeId);
+    List<ProductRowDto> getLeftovers(Long storeId);
 
     StoreDto getStore(Long storeId);
     Store getStoreEntity(Long storeId);
 
-    List<StoreDto> getStores();
+    List<StoreDto> getStores(Pageable pageable);
 
     StoreDto update(Long storeId, String name);
 

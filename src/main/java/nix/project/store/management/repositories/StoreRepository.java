@@ -1,11 +1,14 @@
 package nix.project.store.management.repositories;
 
 import nix.project.store.management.models.Store;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface StoreRepository extends JpaRepository<Store,Long> {
+public interface StoreRepository extends CrudRepository<Store,Long> {
     List<Store> findAll();
+
+    List<Store> findAll(Pageable pageable);
 
 }

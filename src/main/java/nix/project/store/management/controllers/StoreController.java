@@ -4,12 +4,13 @@ import nix.project.store.management.dto.*;
 import nix.project.store.management.models.enums.OrderStatus;
 import nix.project.store.management.services.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -33,9 +34,11 @@ public class StoreController {
     }
     @GetMapping
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity< List<StoreDto> > getAllStores(){
+    public ResponseEntity< List<StoreDto> > getAllStores(@RequestParam int page){
 
-        return new ResponseEntity<>(storeService.getStores(), HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page, 5);
+
+        return new ResponseEntity<>(storeService.getStores(pageable), HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<StoreDto> getStore(@PathVariable long id){
@@ -53,12 +56,12 @@ public class StoreController {
         return new ResponseEntity<>(storeService.getOrders(id), HttpStatus.OK);
     }
     @GetMapping("/{id}/stocks")
-    public ResponseEntity <Map<ProductDto,Double>> getLeftovers(@PathVariable long id){
+    public ResponseEntity <List<ProductRowDto>> getLeftovers(@PathVariable long id){
 
         return new ResponseEntity<>(storeService.getLeftovers(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/accept")
     public ResponseEntity <OrderStatus> acceptOrder(@PathVariable long id){
 
         return new ResponseEntity<>(storeService.acceptOrder(id), HttpStatus.ACCEPTED);
@@ -70,7 +73,7 @@ public class StoreController {
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    @PatchMapping("/selling")
+    @PutMapping("/selling")
     public ResponseEntity<Double> saleProduct(@RequestBody StoreStockDto storeStockDto){
 
         return new ResponseEntity<>(storeService.sale(storeStockDto), HttpStatus.ACCEPTED);

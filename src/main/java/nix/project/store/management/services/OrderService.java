@@ -2,6 +2,7 @@ package nix.project.store.management.services;
 
 import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.OrderProductDto;
+import nix.project.store.management.dto.ProductRowDto;
 import nix.project.store.management.models.Order;
 import nix.project.store.management.models.compositeKeys.OrderProductKey;
 import nix.project.store.management.models.enums.OrderStatus;
@@ -14,6 +15,7 @@ public interface OrderService {
     OrderProductKey addRow(OrderProductDto orderProductDto);
 
     OrderDto getOrder(Long orderId);
+    List<ProductRowDto> getOrderBody(Long orderId);
 
     Order getOrderEntity(Long orderId);
 

@@ -1,10 +1,10 @@
 package nix.project.store.management.controllers;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.OrderProductDto;
+import nix.project.store.management.dto.ProductRowDto;
 import nix.project.store.management.models.compositeKeys.OrderProductKey;
 import nix.project.store.management.models.enums.OrderStatus;
 import nix.project.store.management.services.OrderService;
@@ -34,11 +34,9 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity <OrderDto> findOrder(@PathVariable long id) throws JsonProcessingException {
+    public ResponseEntity <List<ProductRowDto>> findOrder(@PathVariable long id)  {
 
-        String responseJsonString = jsonMapper.writerWithDefaultPrettyPrinter().writeValueAsString(orderService.getOrder(id).getProducts());
-
-        return new ResponseEntity<>(orderService.getOrder(id), HttpStatus.CREATED);
+        return new ResponseEntity<>(orderService.getOrderBody(id), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -57,7 +55,7 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrdersByStore(id, pageable), HttpStatus.OK);
     }
 
-    @PatchMapping("/processing/{id}/")
+    @PutMapping("/{id}/push/")
     public ResponseEntity <OrderStatus> pushOrder(@PathVariable long id){
 
         return new ResponseEntity<>(orderService.pushOrder(id), HttpStatus.ACCEPTED);
