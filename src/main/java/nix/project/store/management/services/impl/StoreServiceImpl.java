@@ -117,9 +117,15 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public List<StoreDto> getStores(Pageable pageable) {
-        return storeRepository.findAll(pageable).stream()
+
+        if(pageable != null)
+            return storeRepository.findAll(pageable).stream()
                 .map(StoreMapper.MAPPER::toMap)
                 .toList();
+        else
+            return storeRepository.findAll().stream()
+                    .map(StoreMapper.MAPPER::toMap)
+                    .toList();
     }
 
     @Override

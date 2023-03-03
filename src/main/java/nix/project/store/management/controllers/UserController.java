@@ -4,6 +4,8 @@ import nix.project.store.management.dto.UserCreateDto;
 import nix.project.store.management.dto.UserDto;
 import nix.project.store.management.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +39,15 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
+    public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam int page) {
 
-        return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
+        if(page < 0)
+            return new ResponseEntity<>(userService.getUsers(null), HttpStatus.OK);
+        else {
+            Pageable pageable = PageRequest.of(page, 10);
+
+            return new ResponseEntity<>(userService.getUsers(pageable), HttpStatus.OK);
+        }
     }
 
     @GetMapping("/{id}")
@@ -49,9 +57,9 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> changeOutlet(@PathVariable long id, @RequestParam long newOutletId) {
+    public ResponseEntity<Void> changeStore(@PathVariable long id, @RequestParam long newStoreId) {
 
-        userService.changeOutlet(id, newOutletId);
+        userService.changeStore(id, newStoreId);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -59,7 +67,7 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
 
         userService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

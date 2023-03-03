@@ -22,7 +22,9 @@ public class StoreController {
 
 
     @PostMapping
-    public ResponseEntity<Long> createStore(@RequestBody String storeName){
+    public ResponseEntity<Long> createStore(@RequestParam String storeName){
+
+        System.out.println(storeName);
 
         return new ResponseEntity<>(storeService.create(storeName), HttpStatus.CREATED);
     }
@@ -36,9 +38,13 @@ public class StoreController {
     //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity< List<StoreDto> > getAllStores(@RequestParam int page){
 
-        Pageable pageable = PageRequest.of(page, 5);
+        if(page < 0)
+            return new ResponseEntity<>(storeService.getStores(null), HttpStatus.OK);
+        else {
+            Pageable pageable = PageRequest.of(page, 5);
 
-        return new ResponseEntity<>(storeService.getStores(pageable), HttpStatus.OK);
+            return new ResponseEntity<>(storeService.getStores(pageable), HttpStatus.OK);
+        }
     }
     @GetMapping("/{id}")
     public ResponseEntity<StoreDto> getStore(@PathVariable long id){
@@ -67,7 +73,7 @@ public class StoreController {
         return new ResponseEntity<>(storeService.acceptOrder(id), HttpStatus.ACCEPTED);
     }
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> updateInfo(@PathVariable long id, @RequestBody String newName){
+    public ResponseEntity<Void> updateInfo(@PathVariable long id, @RequestParam String newName){
 
         storeService.update(id, newName);
 
@@ -83,7 +89,7 @@ public class StoreController {
     public ResponseEntity<Void> deleteStore(@PathVariable long id){
 
         storeService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

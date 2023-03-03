@@ -11,6 +11,7 @@ import nix.project.store.management.models.UserEntity;
 import nix.project.store.management.repositories.StoreRepository;
 import nix.project.store.management.repositories.UserRepository;
 import nix.project.store.management.services.UserService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,10 +56,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers() {
-        return userRepository.findAll().stream()
+    public List<UserDto> getUsers(Pageable pageable) {
+
+        if(pageable != null)
+            return userRepository.findAll(pageable).stream()
                 .map(UserMapper.MAPPER::toMap)
                 .toList();
+        else
+            return userRepository.findAll().stream()
+                    .map(UserMapper.MAPPER::toMap)
+                    .toList();
     }
 
     @Override
@@ -90,12 +97,14 @@ public class UserServiceImpl implements UserService {
             userEntity.setFirstName(userDto.getFirstName());
         if(userDto.getLastName() != null)
             userEntity.setLastName(userDto.getLastName());
+        if(userDto.getRoles() != null)
+            userEntity.setRoles(userDto.getRoles());
 
         return UserMapper.MAPPER.toMap(userRepository.save(userEntity));
     }
 
     @Override
-    public void changeOutlet(Long userId, Long outletId) {
+    public void changeStore(Long userId, Long outletId) {
 
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new);

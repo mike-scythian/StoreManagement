@@ -47,7 +47,7 @@ public class OrderController {
         return  new ResponseEntity<>(orderService.getOrders(pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/outlets/{id}")
+    @GetMapping("/stores/{id}")
     public ResponseEntity <List<OrderDto>> findOrdersByStore(@PathVariable long id, @RequestParam int page){
 
         Pageable pageable = PageRequest.of(page,10);
