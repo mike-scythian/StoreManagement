@@ -80,10 +80,16 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductDto> getProducts(Pageable pageable) {
 
-        return productRepository.findAll(pageable)
+        if(pageable != null)
+            return productRepository.findAll(pageable)
                 .stream()
                 .map(mapper::toMap)
                 .toList();
+        else
+            return productRepository.findAll()
+                    .stream()
+                    .map(mapper::toMap)
+                    .toList();
     }
 
     @Override

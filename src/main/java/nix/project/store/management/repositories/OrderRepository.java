@@ -13,5 +13,4 @@ public interface OrderRepository extends CrudRepository <Order,Long> {
     List<Order> findAll();
 
     List<Order> findAll(Pageable pageable);
-
 }

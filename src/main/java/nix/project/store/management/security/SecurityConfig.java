@@ -37,8 +37,6 @@ public class SecurityConfig {
                 .requestMatchers("/auth/**").permitAll()
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/outlets/**")
-                .authenticated()
                 .and()
                 .addFilterBefore(authFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

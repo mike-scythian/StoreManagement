@@ -17,6 +17,7 @@ import nix.project.store.management.repositories.OrderRepository;
 import nix.project.store.management.services.OrderService;
 import nix.project.store.management.services.ProductService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -80,8 +81,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> getOrders(Pageable pageable) {
-
-        return orderRepo.findAll(pageable)
+        if(pageable != null)
+            return orderRepo.findAll(pageable)
+                    .stream()
+                    .map(order -> getOrder(order.getId()))
+                    .toList();
+        else
+            return orderRepo.findAll()
                 .stream()
                 .map(order -> getOrder(order.getId()))
                 .toList();

@@ -1,5 +1,6 @@
 package nix.project.store.management.services.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import nix.project.store.management.dto.*;
 import nix.project.store.management.dto.mapper.*;
@@ -16,7 +17,7 @@ import nix.project.store.management.repositories.StoreStockRepository;
 import nix.project.store.management.services.OrderService;
 import nix.project.store.management.services.ProductService;
 import nix.project.store.management.services.StoreService;
-import nix.project.store.management.services.SaleHistoryService;
+import nix.project.store.management.services.SummaryService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +37,7 @@ public class StoreServiceImpl implements StoreService {
     private final StoreStockRepository storeStockRepository;
     private final OrderService orderService;
     private final ProductService productService;
-    private final SaleHistoryService saleHistoryService;
+    private final SummaryService summaryService;
 
 
     @Override
@@ -140,6 +141,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional
     public double sale(StoreStockDto storeStockDto) {
 
         StoreStock storeStock = storeStockRepository.findById(
@@ -161,7 +163,7 @@ public class StoreServiceImpl implements StoreService {
         storeStock.setLeftovers(storeStock.getLeftovers() - storeStockDto.quantity());
         storeStockRepository.save(storeStock);
 
-        saleHistoryService.createReport(
+        summaryService.createReport(
                 storeStockDto.productId(),
                 productPrice * storeStockDto.quantity(),
                 storeStockDto.storeId());
@@ -170,6 +172,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional
     public OrderStatus acceptOrder(Long orderId) {
 
         Order order = orderService.getOrderEntity(orderId);

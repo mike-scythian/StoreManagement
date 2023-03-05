@@ -36,9 +36,13 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<List<ProductDto>> getAllProducts(@RequestParam int page) {
 
-        Pageable pageable = PageRequest.of(page,3);
+        if(page < 0)
+            return new ResponseEntity<>(productService.getProducts(null), HttpStatus.CREATED);
+        else {
+            Pageable pageable = PageRequest.of(page, 3);
 
-        return new ResponseEntity<>(productService.getProducts(pageable), HttpStatus.CREATED);
+            return new ResponseEntity<>(productService.getProducts(pageable), HttpStatus.CREATED);
+        }
     }
 
     @GetMapping("/{id}")

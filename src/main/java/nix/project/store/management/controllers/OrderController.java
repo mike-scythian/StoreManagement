@@ -11,6 +11,7 @@ import nix.project.store.management.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,19 @@ public class OrderController {
     @GetMapping
     public ResponseEntity <List<OrderDto>> findOrders(@RequestParam int page){
 
-        Pageable pageable = PageRequest.of(page,5);
+        if(page < 0)
+            return  new ResponseEntity<>(orderService.getOrders(null), HttpStatus.OK);
+        else {
+
+            Pageable pageable = PageRequest.of(page, 5);
+
+            return new ResponseEntity<>(orderService.getOrders(pageable), HttpStatus.OK);
+        }
+    }
+    @GetMapping("/sort")
+    public ResponseEntity <List<OrderDto>> findOrders(@RequestParam int page, @RequestParam String sortParam){
+
+        Pageable pageable = PageRequest.of(page,5, Sort.by(Sort.Direction.ASC, sortParam));
 
         return  new ResponseEntity<>(orderService.getOrders(pageable), HttpStatus.OK);
     }

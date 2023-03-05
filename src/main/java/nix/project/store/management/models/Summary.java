@@ -6,13 +6,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="sale_history")
+@Table(name="summary")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class SaleHistory {
+public class Summary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -7,6 +7,7 @@ import nix.project.store.management.models.Order;
 import nix.project.store.management.models.compositeKeys.OrderProductKey;
 import nix.project.store.management.models.enums.OrderStatus;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 

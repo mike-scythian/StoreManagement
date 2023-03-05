@@ -88,10 +88,7 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = userRepository.findById(userDto.getId())
                 .orElseThrow(DataNotFoundException::new);
-
-        if(userRepository.existsByEmail(userDto.getEmail()))
-
-            throw new ValueExistsAlreadyException();
+        System.out.println(userEntity.getEmail());
 
         if(userDto.getFirstName() != null)
             userEntity.setFirstName(userDto.getFirstName());
@@ -99,7 +96,7 @@ public class UserServiceImpl implements UserService {
             userEntity.setLastName(userDto.getLastName());
         if(userDto.getRoles() != null)
             userEntity.setRoles(userDto.getRoles());
-
+        System.out.println(userEntity.getLastName());
         return UserMapper.MAPPER.toMap(userRepository.save(userEntity));
     }
 
