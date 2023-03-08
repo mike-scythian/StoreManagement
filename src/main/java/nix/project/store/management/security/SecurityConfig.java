@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .requestMatchers("/**").authenticated()
                 .and()
                 .formLogin()
-                .successHandler(myAuthenticationSuccessHandler())
+                .successHandler(customAuthenticationSuccessHandler())
                 .and()
                 .build();
     }
@@ -61,7 +61,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
+    public AuthenticationSuccessHandler customAuthenticationSuccessHandler(){
         return new CustomAuthenticationSuccessHandler();
     }
 }

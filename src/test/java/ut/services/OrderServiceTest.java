@@ -44,11 +44,50 @@ class OrderServiceTest {
     @InjectMocks
     private OrderServiceImpl orderService;
 
-    private static Order order;
 
+    @Test
+    void shouldAddNewRow() {
 
-    @BeforeAll
-    static void init() {
+        Order testOrder = initialOrder();
+
+        when(orderProductRepository.save(any(OrderProduct.class)))
+                .thenReturn(new OrderProduct(new OrderProductKey(1L, 30L), 10.0, null, null));
+        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(testOrder));
+
+        var testRow = orderService.addRow(new ProductQuantityRowDto(2L, 30L, 10.0));
+
+        assertThat(testRow).isNotNull();
+        assertThat(testRow.getOrderId()).isEqualTo(testOrder.getId());
+        assertThat(testRow.getProductId()).isEqualTo(30L);
+    }
+
+    @Test
+    void shouldGetOrderBody() {
+
+        Order testOrder = initialOrder();
+
+        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(testOrder));
+        when(productService.getProduct(anyLong()))
+                .thenReturn(new ProductDto(100L, "testProduct", 1.0, Units.KG, "testType"));
+
+        var testList = orderService.getOrderBody(testOrder.getId());
+
+        assertThat(testList.size()).isEqualTo(testOrder.getOrderBody().size());
+        assertThat(testList.stream().mapToDouble(ProductRowDto::quantity)).contains(100.0, 200.0);
+    }
+
+    @Test
+    void shouldChangeOrderStatus() {
+
+        Order testOrder = initialOrder();
+
+        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(testOrder));
+        when(orderRepository.save(any(Order.class))).thenReturn(testOrder);
+
+        assertThat(orderService.pushOrder(1L)).isEqualTo(OrderStatus.IN_PROCESSING);
+    }
+
+    private Order initialOrder(){
 
         var testDateTime = LocalDateTime.of(
                 LocalDate.of(2000, 1, 1),
@@ -59,42 +98,7 @@ class OrderServiceTest {
         testProductSet.add(new OrderProduct(new OrderProductKey(1L, 10L), 100.0, new Order(), new Product()));
         testProductSet.add(new OrderProduct(new OrderProductKey(1L, 20L), 200.0, new Order(), new Product()));
 
-        order = new Order(1L, testDateTime, OrderStatus.NEW, testProductSet, new Store());
-    }
+       return new Order(1L, testDateTime, OrderStatus.NEW, testProductSet, new Store());
 
-    @Test
-    void shouldAddNewRow() {
-
-        when(orderProductRepository.save(any(OrderProduct.class)))
-                .thenReturn(new OrderProduct(new OrderProductKey(1L, 30L), 10.0, null, null));
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
-
-        var testRow = orderService.addRow(new ProductQuantityRowDto(2L, 30L, 10.0));
-
-        assertThat(testRow).isNotNull();
-        assertThat(testRow.getOrderId()).isEqualTo(order.getId());
-        assertThat(testRow.getProductId()).isEqualTo(30L);
-    }
-
-    @Test
-    void shouldGetOrderBody() {
-
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
-        when(productService.getProduct(anyLong()))
-                .thenReturn(new ProductDto(100L, "testProduct", 1.0, Units.KG, "testType"));
-
-        var testList = orderService.getOrderBody(order.getId());
-
-        assertThat(testList.size()).isEqualTo(order.getOrderBody().size());
-        assertThat(testList.stream().mapToDouble(ProductRowDto::quantity)).containsExactly(100.0, 200.0);
-    }
-
-    @Test
-    void shouldChangeOrderStatus() {
-
-        when(orderRepository.findById(anyLong())).thenReturn(Optional.of(order));
-        when(orderRepository.save(any(Order.class))).thenReturn(order);
-
-        assertThat(orderService.pushOrder(1L)).isEqualTo(OrderStatus.IN_PROCESSING);
     }
 }

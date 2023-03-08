@@ -101,13 +101,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changeStore(Long userId, Long outletId) {
+    public void changeStore(Long userId, Long storeId) {
 
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new);
 
-        if(!userEntity.getStore().getId().equals(outletId)) {
-            userEntity.setStore(storeRepository.findById(outletId)
+        if(!userEntity.getStore().getId().equals(storeId)) {
+            userEntity.setStore(storeRepository.findById(storeId)
                     .orElseThrow(DataNotFoundException::new));
             userRepository.save(userEntity);
         }

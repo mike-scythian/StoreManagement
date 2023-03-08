@@ -32,10 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
 class StoreServiceTest {
@@ -58,31 +55,12 @@ class StoreServiceTest {
     @InjectMocks
     private StoreServiceImpl storeService;
 
-    private static Store store;
-
-    @BeforeAll
-    static void init() {
-
-        Set<StoreStock> leftoversSet = new HashSet<>();
-
-        leftoversSet.add(new StoreStock(new StoreStockKey(8L, 10L), 100.0, new Store(), new Product()));
-        leftoversSet.add(new StoreStock(new StoreStockKey(8L, 20L), 200.0, new Store(), new Product()));
-
-        store = Store.builder()
-                .id(8L)
-                .openDate(LocalDate.of(2000, 12, 1))
-                .name("TestStore")
-                .income(1000.0)
-                .storeStock(leftoversSet)
-                .sellers(Collections.EMPTY_SET)
-                .orders(Collections.EMPTY_SET)
-                .build();
-    }
-
     @Test
     void shouldCreateStore() {
 
-        when(storeRepository.save(any(Store.class))).thenReturn(store);
+        var testStore = initialStore();
+
+        when(storeRepository.save(any(Store.class))).thenReturn(testStore);
 
         var createStoreTest = storeService.create("TestStore");
 
@@ -92,18 +70,15 @@ class StoreServiceTest {
     @Test
     void shouldCreateEmptyOrder() {
 
-        var testDateTime = LocalDateTime.of(
-                LocalDate.of(2000, 1, 1),
-                LocalTime.of(12, 0, 0));
-
+        var testStore = initialStore();
         var order = OrderDto.builder()
                 .id(1L)
-                .createTime(testDateTime)
+                .createTime(LocalDateTime.now())
                 .status(OrderStatus.NEW)
-                .store(store.getId())
+                .store(testStore.getId())
                 .build();
 
-        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(store));
+        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(testStore));
         when(orderService.saveOrder(any(Order.class))).thenReturn(order);
 
         var testNewOrder = storeService.createEmptyOrder(8L);
@@ -115,43 +90,25 @@ class StoreServiceTest {
     @Test
     void shouldGetLeftovers() {
 
-        Set<StoreStock> innerLeftoversSet = new HashSet<>();
+        var testStore = initialStore();
+        var product = initialProduct();
 
-        innerLeftoversSet.add(new StoreStock(new StoreStockKey(8L, 10L), 100.0, new Store(), new Product()));
-        innerLeftoversSet.add(new StoreStock(new StoreStockKey(8L, 20L), 200.0, new Store(), new Product()));
-
-        Store innerTestStore = Store.builder()
-                .id(8L)
-                .openDate(LocalDate.of(2000, 12, 1))
-                .name("TestStore")
-                .income(1000.0)
-                .storeStock(innerLeftoversSet)
-                .sellers(Collections.EMPTY_SET)
-                .orders(Collections.EMPTY_SET)
-                .build();
-
-        var product = ProductDto.builder()
-                .id(1L)
-                .name("TestProd")
-                .price(10.0)
-                .units(Units.APIECE)
-                .type("testType")
-                .build();
-
-        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(innerTestStore));
+        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(testStore));
         when(productService.getProduct(anyLong())).thenReturn(product);
 
         var leftovers = storeService.getLeftovers(8L);
 
         assertThat(leftovers).hasSize(2);
-        assertThat(leftovers.stream().mapToDouble(ProductRowDto::quantity)).containsExactly(100.0, 200.0);
+        assertThat(leftovers.stream().mapToDouble(ProductRowDto::quantity)).contains(100.0, 200.0);
     }
 
     @Test
     void shouldUpdateStoreName() {
 
-        when(storeRepository.save(any(Store.class))).thenReturn(store);
-        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(store));
+        var testStore = initialStore();
+
+        when(storeRepository.save(any(Store.class))).thenReturn(testStore);
+        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(testStore));
 
         var testUpdateStore = storeService.update(8L, "TestUpdate");
 
@@ -162,28 +119,22 @@ class StoreServiceTest {
     @Test
     void shouldGetIncomeAfterSuccessSale() {
 
+        var testStore = initialStore();
+        var product = initialProduct();
+
         var storeStockTest = new StoreStock(
                 new StoreStockKey(1L, 10L),
                 100.0,
                 new Store(),
                 new Product());
 
-        var product = ProductDto.builder()
-                .id(10L)
-                .name("TestProd")
-                .price(10.0)
-                .units(Units.APIECE)
-                .type("testType")
-                .build();
-
         when(storeStockRepository.findById(any(StoreStockKey.class))).thenReturn(Optional.of(storeStockTest));
         when(storeStockRepository.save(any(StoreStock.class))).thenReturn(storeStockTest);
-        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(store));
-        when(storeRepository.save(any(Store.class))).thenReturn(store);
+        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(testStore));
+        when(storeRepository.save(any(Store.class))).thenReturn(testStore);
         when(productService.getProduct(anyLong())).thenReturn(product);
 
-
-        var testSale = storeService.sale(new ProductQuantityRowDto(store.getId(), product.getId(), 50.0));
+        var testSale = storeService.sale(new ProductQuantityRowDto(testStore.getId(), product.getId(), 50.0));
 
         assertThat(testSale).isEqualTo(1500.0);
     }
@@ -191,13 +142,12 @@ class StoreServiceTest {
     @Test
     void shouldGetExceptionAfterWrongSale() {
 
+        var productRow = new ProductQuantityRowDto(1L, 10L, 2000.0);
         var storeStockTest = new StoreStock(
                 new StoreStockKey(1L, 10L),
                 100.0,
                 new Store(),
                 new Product());
-
-        var productRow = new ProductQuantityRowDto(1L, 10L, 2000.0);
 
         when(storeStockRepository.findById(any(StoreStockKey.class))).thenReturn(Optional.of(storeStockTest));
 
@@ -207,29 +157,62 @@ class StoreServiceTest {
     @Test
     void shouldSetupDoneOrderStatus(){
 
-        Set<OrderProduct> testProductSet = new HashSet<>();
-
-        testProductSet.add(new OrderProduct(new OrderProductKey(1L, 10L), 100.0, new Order(), new Product()));
-        testProductSet.add(new OrderProduct(new OrderProductKey(1L, 20L), 200.0, new Order(), new Product()));
-
-        var order = new Order(1L, LocalDateTime.now(), OrderStatus.IN_PROCESSING, testProductSet, store);
-
-        var product = ProductDto.builder()
-                .id(10L)
-                .name("TestProd")
-                .price(10.0)
-                .units(Units.APIECE)
-                .type("testType")
-                .build();
+        var testStore = initialStore();
+        var order = initialOrder();
+        var product = initialProduct();
 
         when(orderService.getOrderEntity(anyLong())).thenReturn(order);
-        when(storeStockRepository.saveAll(anyCollection())).thenReturn(store.getStoreStock().stream().toList());
-        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(store));
+        when(storeStockRepository.saveAll(anyCollection())).thenReturn(testStore.getStoreStock().stream().toList());
+        when(storeRepository.findById(anyLong())).thenReturn(Optional.of(testStore));
         when(productService.getProduct(anyLong())).thenReturn(product);
         when(orderService.saveOrder(any(Order.class))).thenReturn(OrderMapper.MAPPER.toMap(order));
 
         storeService.acceptOrder(1L);
 
         assertThat(order.getStatus()).isEqualTo(OrderStatus.DONE);
+    }
+
+    private Store initialStore(){
+
+        Set<StoreStock> leftoversSet = new HashSet<>();
+
+        leftoversSet.add(new StoreStock(new StoreStockKey(8L, 10L), 100.0, new Store(), new Product()));
+        leftoversSet.add(new StoreStock(new StoreStockKey(8L, 20L), 200.0, new Store(), new Product()));
+
+        return Store.builder()
+                .id(8L)
+                .openDate(LocalDate.of(2000, 12, 1))
+                .name("TestStore")
+                .income(1000.0)
+                .storeStock(leftoversSet)
+                .sellers(Collections.EMPTY_SET)
+                .orders(Collections.EMPTY_SET)
+                .build();
+    }
+
+    private Order initialOrder(){
+
+        var testDateTime = LocalDateTime.of(
+                LocalDate.of(2000, 1, 1),
+                LocalTime.of(12, 0, 0));
+
+        Set<OrderProduct> testProductSet = new HashSet<>();
+
+        testProductSet.add(new OrderProduct(new OrderProductKey(1L, 10L), 100.0, new Order(), new Product()));
+        testProductSet.add(new OrderProduct(new OrderProductKey(1L, 20L), 200.0, new Order(), new Product()));
+
+        return new Order(1L, testDateTime, OrderStatus.IN_PROCESSING, testProductSet, initialStore());
+
+    }
+
+    private ProductDto initialProduct(){
+
+        return ProductDto.builder()
+                .id(10L)
+                .name("TestProd")
+                .price(10.0)
+                .units(Units.APIECE)
+                .type("testType")
+                .build();
     }
 }
