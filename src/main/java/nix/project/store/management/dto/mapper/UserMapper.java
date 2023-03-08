@@ -1,7 +1,7 @@
 package nix.project.store.management.dto.mapper;
 
 import nix.project.store.management.dto.UserDto;
-import nix.project.store.management.models.UserEntity;
+import nix.project.store.management.entities.UserEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

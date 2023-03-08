@@ -1,19 +1,18 @@
 package nix.project.store.management.services;
 
 import nix.project.store.management.dto.OrderDto;
-import nix.project.store.management.dto.OrderProductDto;
+import nix.project.store.management.dto.ProductQuantityRowDto;
 import nix.project.store.management.dto.ProductRowDto;
-import nix.project.store.management.models.Order;
-import nix.project.store.management.models.compositeKeys.OrderProductKey;
-import nix.project.store.management.models.enums.OrderStatus;
+import nix.project.store.management.entities.Order;
+import nix.project.store.management.entities.compositeKeys.OrderProductKey;
+import nix.project.store.management.entities.enums.OrderStatus;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
 public interface OrderService {
 
-    OrderProductKey addRow(OrderProductDto orderProductDto);
+    OrderProductKey addRow(ProductQuantityRowDto productQuantityRowDto);
 
     OrderDto getOrder(Long orderId);
     List<ProductRowDto> getOrderBody(Long orderId);
@@ -26,7 +25,7 @@ public interface OrderService {
 
     void delete(Long orderId);
 
-    void deleteRow(OrderProductDto orderProductDto);
+    void deleteRow(ProductQuantityRowDto productQuantityRowDto);
 
     OrderDto saveOrder(Order order);
 

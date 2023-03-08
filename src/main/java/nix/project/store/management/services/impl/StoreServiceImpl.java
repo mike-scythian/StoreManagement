@@ -6,12 +6,12 @@ import nix.project.store.management.dto.*;
 import nix.project.store.management.dto.mapper.*;
 import nix.project.store.management.exceptions.DataNotFoundException;
 import nix.project.store.management.exceptions.NotEnoughLeftoversException;
-import nix.project.store.management.models.Order;
-import nix.project.store.management.models.Product;
-import nix.project.store.management.models.Store;
-import nix.project.store.management.models.StoreStock;
-import nix.project.store.management.models.compositeKeys.StoreStockKey;
-import nix.project.store.management.models.enums.OrderStatus;
+import nix.project.store.management.entities.Order;
+import nix.project.store.management.entities.Product;
+import nix.project.store.management.entities.Store;
+import nix.project.store.management.entities.StoreStock;
+import nix.project.store.management.entities.compositeKeys.StoreStockKey;
+import nix.project.store.management.entities.enums.OrderStatus;
 import nix.project.store.management.repositories.StoreRepository;
 import nix.project.store.management.repositories.StoreStockRepository;
 import nix.project.store.management.services.OrderService;
@@ -142,31 +142,31 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     @Transactional
-    public double sale(StoreStockDto storeStockDto) {
+    public double sale(ProductQuantityRowDto productQuantityRow) {
 
         StoreStock storeStock = storeStockRepository.findById(
-                new StoreStockKey(storeStockDto.storeId(), storeStockDto.productId()))
+                new StoreStockKey(productQuantityRow.ownerId(), productQuantityRow.productId()))
                         .orElseThrow(DataNotFoundException::new);
 
-        if (storeStockDto.quantity() > storeStock.getLeftovers())
+        if (productQuantityRow.quantity() > storeStock.getLeftovers())
             throw new NotEnoughLeftoversException();
 
         nullToZeroLeftovers();
 
-        Store store = storeRepository.findById(storeStockDto.storeId())
+        Store store = storeRepository.findById(productQuantityRow.ownerId())
                 .orElseThrow(DataNotFoundException::new);
 
-        double productPrice = productService.getProduct(storeStockDto.productId()).getPrice();
+        double productPrice = productService.getProduct(productQuantityRow.productId()).getPrice();
 
-        double resultIncome = store.getIncome() + productPrice * storeStockDto.quantity();
+        double resultIncome = store.getIncome() + productPrice * productQuantityRow.quantity();
         store.setIncome(resultIncome);
-        storeStock.setLeftovers(storeStock.getLeftovers() - storeStockDto.quantity());
+        storeStock.setLeftovers(storeStock.getLeftovers() - productQuantityRow.quantity());
         storeStockRepository.save(storeStock);
 
         summaryService.createReport(
-                storeStockDto.productId(),
-                productPrice * storeStockDto.quantity(),
-                storeStockDto.storeId());
+                productQuantityRow.productId(),
+                productPrice * productQuantityRow.quantity(),
+                productQuantityRow.ownerId());
 
         return storeRepository.save(store).getIncome();
     }
@@ -180,7 +180,7 @@ public class StoreServiceImpl implements StoreService {
         Long storeId = order.getStore().getId();
 
         Set<StoreStock> stockSet = order.getOrderBody().stream()
-                .map(OrderProductMapper.MAPPER::toMap)
+                .map(ProductQuantityRowMapper.MAPPER::toMap)
                 .map(orderProd -> pushOrderToStore(storeId, orderProd))
                 .collect(Collectors.toSet());
 
@@ -203,9 +203,9 @@ public class StoreServiceImpl implements StoreService {
             throw new DataNotFoundException();
     }
 
-    private StoreStock pushOrderToStore(Long storeId, OrderProductDto orderProductDto) {
+    private StoreStock pushOrderToStore(Long storeId, ProductQuantityRowDto productQuantityRowDto) {
 
-        StoreStockKey key = new StoreStockKey(storeId, orderProductDto.productId());
+        StoreStockKey key = new StoreStockKey(storeId, productQuantityRowDto.productId());
         StoreStock storeStockRow = new StoreStock();
 
         if (storeStockRepository.existsById(key))
@@ -213,16 +213,16 @@ public class StoreServiceImpl implements StoreService {
                     .orElseThrow(DataNotFoundException::new);
 
         else {
-            Product product = ProductMapper.MAPPER.toEntityMap(productService.getProduct(orderProductDto.productId()));
+            Product product = ProductMapper.MAPPER.toEntityMap(productService.getProduct(productQuantityRowDto.productId()));
             storeStockRow.setId(key);
             storeStockRow.setProduct(product);
             storeStockRow.setStore(storeRepository.findById(storeId)
                     .orElseThrow(DataNotFoundException::new));
         }
         if(storeStockRow.getLeftovers() == null)
-            storeStockRow.setLeftovers(orderProductDto.quantity());
+            storeStockRow.setLeftovers(productQuantityRowDto.quantity());
         else
-            storeStockRow.setLeftovers(storeStockRow.getLeftovers() + orderProductDto.quantity());
+            storeStockRow.setLeftovers(storeStockRow.getLeftovers() + productQuantityRowDto.quantity());
 
         return storeStockRow;
     }

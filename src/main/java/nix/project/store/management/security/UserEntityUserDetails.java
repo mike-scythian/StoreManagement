@@ -1,6 +1,6 @@
 package nix.project.store.management.security;
 
-import nix.project.store.management.models.UserEntity;
+import nix.project.store.management.entities.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

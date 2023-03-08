@@ -1,13 +1,14 @@
 package nix.project.store.management.controllers;
 
 import nix.project.store.management.dto.*;
-import nix.project.store.management.models.enums.OrderStatus;
+import nix.project.store.management.entities.enums.OrderStatus;
 import nix.project.store.management.services.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class StoreController {
 
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Long> createStore(@RequestParam String storeName){
 
         System.out.println(storeName);
@@ -30,12 +32,13 @@ public class StoreController {
     }
 
     @PostMapping("{id}/orders")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity <OrderDto> createOrder(@RequestBody long storeId){
 
         return new ResponseEntity<>(storeService.createEmptyOrder(storeId), HttpStatus.CREATED);
     }
     @GetMapping
-    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity< List<StoreDto> > getAllStores(@RequestParam int page){
 
         if(page < 0)
@@ -52,6 +55,7 @@ public class StoreController {
         return new ResponseEntity<>(storeService.getStore(id), HttpStatus.OK);
     }
     @GetMapping("/{id}/sellers")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Set<UserDto> > getSellerSet(@PathVariable long id){
 
         return new ResponseEntity<>(storeService.getSellers(id), HttpStatus.OK);
@@ -68,11 +72,13 @@ public class StoreController {
     }
 
     @PutMapping("/{id}/accept")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity <OrderStatus> acceptOrder(@PathVariable long id){
 
         return new ResponseEntity<>(storeService.acceptOrder(id), HttpStatus.ACCEPTED);
     }
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> updateInfo(@PathVariable long id, @RequestParam String newName){
 
         storeService.update(id, newName);
@@ -80,12 +86,14 @@ public class StoreController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
     @PutMapping("/selling")
-    public ResponseEntity<Double> saleProduct(@RequestBody StoreStockDto storeStockDto){
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<Double> saleProduct(@RequestBody ProductQuantityRowDto productQuantityRow){
 
-        return new ResponseEntity<>(storeService.sale(storeStockDto), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(storeService.sale(productQuantityRow), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteStore(@PathVariable long id){
 
         storeService.delete(id);

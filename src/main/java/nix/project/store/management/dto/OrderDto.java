@@ -1,7 +1,7 @@
 package nix.project.store.management.dto;
 
 import lombok.*;
-import nix.project.store.management.models.enums.OrderStatus;
+import nix.project.store.management.entities.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;

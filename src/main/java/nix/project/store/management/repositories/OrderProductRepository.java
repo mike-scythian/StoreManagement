@@ -1,7 +1,7 @@
 package nix.project.store.management.repositories;
 
-import nix.project.store.management.models.compositeKeys.OrderProductKey;
-import nix.project.store.management.models.OrderProduct;
+import nix.project.store.management.entities.compositeKeys.OrderProductKey;
+import nix.project.store.management.entities.OrderProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

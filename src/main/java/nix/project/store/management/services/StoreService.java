@@ -1,8 +1,8 @@
 package nix.project.store.management.services;
 
 import nix.project.store.management.dto.*;
-import nix.project.store.management.models.Store;
-import nix.project.store.management.models.enums.OrderStatus;
+import nix.project.store.management.entities.Store;
+import nix.project.store.management.entities.enums.OrderStatus;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public interface StoreService {
 
     StoreDto update(Long storeId, String name);
 
-    double sale(StoreStockDto storeStockDto);
+    double sale(ProductQuantityRowDto productQuantityRow);
 
     OrderDto createEmptyOrder(Long storeId);
 

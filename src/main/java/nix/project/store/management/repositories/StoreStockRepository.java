@@ -1,7 +1,7 @@
 package nix.project.store.management.repositories;
 
-import nix.project.store.management.models.StoreStock;
-import nix.project.store.management.models.compositeKeys.StoreStockKey;
+import nix.project.store.management.entities.StoreStock;
+import nix.project.store.management.entities.compositeKeys.StoreStockKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -2,22 +2,21 @@ package nix.project.store.management.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import nix.project.store.management.dto.OrderDto;
-import nix.project.store.management.dto.OrderProductDto;
+import nix.project.store.management.dto.ProductQuantityRowDto;
 import nix.project.store.management.dto.ProductRowDto;
 import nix.project.store.management.dto.mapper.OrderMapper;
 import nix.project.store.management.dto.mapper.ProductMapper;
 import nix.project.store.management.exceptions.DataNotFoundException;
-import nix.project.store.management.models.Order;
-import nix.project.store.management.models.OrderProduct;
-import nix.project.store.management.models.Product;
-import nix.project.store.management.models.compositeKeys.OrderProductKey;
-import nix.project.store.management.models.enums.OrderStatus;
+import nix.project.store.management.entities.Order;
+import nix.project.store.management.entities.OrderProduct;
+import nix.project.store.management.entities.Product;
+import nix.project.store.management.entities.compositeKeys.OrderProductKey;
+import nix.project.store.management.entities.enums.OrderStatus;
 import nix.project.store.management.repositories.OrderProductRepository;
 import nix.project.store.management.repositories.OrderRepository;
 import nix.project.store.management.services.OrderService;
 import nix.project.store.management.services.ProductService;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -35,18 +34,22 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public OrderProductKey addRow(OrderProductDto orderProductDto) {
+    public OrderProductKey addRow(ProductQuantityRowDto productQuantityRowDto) {
+
+        Order order = orderRepo.findById(productQuantityRowDto.ownerId()).orElseThrow(DataNotFoundException::new);
+
+        if(order.getStatus() == OrderStatus.DONE)
+            throw new RuntimeException();
 
         OrderProduct orderRow = new OrderProduct();
-        Product product = ProductMapper.MAPPER.toEntityMap(productService.getProduct(orderProductDto.productId()));
+        Product product = ProductMapper.MAPPER.toEntityMap(productService.getProduct(productQuantityRowDto.productId()));
         orderRow.setProduct(product);
-        orderRow.setOrder(orderRepo.findById(orderProductDto.orderId())
-                .orElseThrow(DataNotFoundException::new));
+        orderRow.setOrder(order);
 
-        if (orderProductDto.quantity() != null)
-            orderRow.setQuantity(orderProductDto.quantity());
+        if (productQuantityRowDto.quantity() != null)
+            orderRow.setQuantity(productQuantityRowDto.quantity());
 
-        orderRow.setId(new OrderProductKey(orderProductDto.orderId(), orderProductDto.productId()));
+        orderRow.setId(new OrderProductKey(productQuantityRowDto.ownerId(), productQuantityRowDto.productId()));
 
         return orderProductRepo.save(orderRow).getId();
     }
@@ -130,9 +133,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteRow(OrderProductDto orderProductDto) {
+    public void deleteRow(ProductQuantityRowDto productQuantityRowDto) {
 
-        OrderProductKey key = new OrderProductKey(orderProductDto.orderId(), orderProductDto.productId());
+        OrderProductKey key = new OrderProductKey(productQuantityRowDto.ownerId(), productQuantityRowDto.productId());
 
         if (orderProductRepo.existsById(key))
             orderProductRepo.deleteById(key);

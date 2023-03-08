@@ -1,10 +1,9 @@
 package nix.project.store.management.dto.mapper;
 
 import nix.project.store.management.dto.OrderDto;
-import nix.project.store.management.models.Order;
-import nix.project.store.management.models.OrderProduct;
+import nix.project.store.management.entities.Order;
+import nix.project.store.management.entities.OrderProduct;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.Collections;

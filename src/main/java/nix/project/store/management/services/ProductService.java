@@ -1,6 +1,5 @@
 package nix.project.store.management.services;
 
-import nix.project.store.management.dto.ProductCreateDto;
 import nix.project.store.management.dto.ProductDto;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +12,7 @@ public interface ProductService {
 
     ProductDto getProduct(Long productId);
 
-    ProductCreateDto createProduct(ProductCreateDto productDto);
+    ProductDto createProduct(ProductDto productDto);
 
     ProductDto update(Long productId, ProductDto productDto);
 

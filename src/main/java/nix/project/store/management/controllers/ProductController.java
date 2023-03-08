@@ -1,7 +1,5 @@
 package nix.project.store.management.controllers;
 
-
-import nix.project.store.management.dto.ProductCreateDto;
 import nix.project.store.management.dto.ProductDto;
 import nix.project.store.management.services.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,12 +7,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 
 @RestController
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 @RequestMapping("/products")
 public class ProductController {
 
@@ -22,9 +22,9 @@ public class ProductController {
     private ProductServiceImpl productService;
 
     @PostMapping()
-    public ResponseEntity<ProductCreateDto> createProduct(@RequestBody ProductCreateDto productCreateDto) {
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
 
-        return new ResponseEntity<>(productService.createProduct(productCreateDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

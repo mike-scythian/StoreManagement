@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +21,14 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<Long> createUser(@RequestBody UserCreateDto userDto) {
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<UserDto> createUser(@RequestBody UserCreateDto userDto) {
 
         return new ResponseEntity<>(userService.create(userDto), HttpStatus.CREATED);
     }
 
     @PatchMapping("/password")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> updatePassword(@RequestParam String oldPassword, @RequestParam String newPassword) {
 
         userService.updatePassword(newPassword, oldPassword);
@@ -39,6 +42,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam int page) {
 
         if(page < 0)
@@ -57,6 +61,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> changeStore(@PathVariable long id, @RequestParam long newStoreId) {
 
         userService.changeStore(id, newStoreId);
@@ -64,6 +69,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable long id) {
 
         userService.delete(id);

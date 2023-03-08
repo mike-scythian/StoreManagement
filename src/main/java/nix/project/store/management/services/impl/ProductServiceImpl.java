@@ -1,16 +1,13 @@
 package nix.project.store.management.services.impl;
 
 import lombok.AllArgsConstructor;
-import nix.project.store.management.dto.ProductCreateDto;
 import nix.project.store.management.dto.ProductDto;
-import nix.project.store.management.dto.mapper.ProductCreateMapper;
 import nix.project.store.management.dto.mapper.ProductMapper;
 import nix.project.store.management.exceptions.DataNotFoundException;
 import nix.project.store.management.exceptions.ValueExistsAlreadyException;
-import nix.project.store.management.models.Product;
+import nix.project.store.management.entities.Product;
 import nix.project.store.management.repositories.ProductRepository;
 import nix.project.store.management.services.ProductService;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,16 +22,16 @@ public class ProductServiceImpl implements ProductService {
 
 
     @Override
-    public ProductCreateDto createProduct(ProductCreateDto productCreateDto) {
+    public ProductDto createProduct(ProductDto productDto) {
 
-        Product product = ProductCreateMapper.MAPPER.toEntityMap(productCreateDto);
+        Product product = mapper.toEntityMap(productDto);
 
         if (productRepository.existsByNameAndType(product.getName(), product.getType()))
 
             throw new ValueExistsAlreadyException();
         else {
             Product savedProduct = productRepository.save(product);
-            return ProductCreateMapper.MAPPER.toMap(savedProduct);
+            return mapper.toMap(savedProduct);
         }
     }
 

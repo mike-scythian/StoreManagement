@@ -1,6 +1,6 @@
 package nix.project.store.management.repositories;
 
-import nix.project.store.management.models.UserEntity;
+import nix.project.store.management.entities.UserEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 

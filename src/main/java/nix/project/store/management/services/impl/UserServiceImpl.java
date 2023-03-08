@@ -7,7 +7,7 @@ import nix.project.store.management.dto.mapper.UserMapper;
 import nix.project.store.management.exceptions.DataNotFoundException;
 import nix.project.store.management.exceptions.InvalidPasswordException;
 import nix.project.store.management.exceptions.ValueExistsAlreadyException;
-import nix.project.store.management.models.UserEntity;
+import nix.project.store.management.entities.UserEntity;
 import nix.project.store.management.repositories.StoreRepository;
 import nix.project.store.management.repositories.UserRepository;
 import nix.project.store.management.services.UserService;
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public long create(UserCreateDto userCreateDto) {
+    public UserDto create(UserCreateDto userCreateDto) {
 
         if(userRepository.existsByEmail(userCreateDto.getEmail()))
             throw new ValueExistsAlreadyException();
@@ -41,11 +41,11 @@ public class UserServiceImpl implements UserService {
                 .email(userCreateDto.getEmail())
                 .password(passwordEncoder.encode(userCreateDto.getPassword()))
                 .roles(userCreateDto.getRoles())
-                .outlet(storeRepository.findById(userCreateDto.getStore())
+                .store(storeRepository.findById(userCreateDto.getStore())
                         .orElseThrow(DataNotFoundException::new))
                 .build();
 
-        return userRepository.save(userEntity).getId();
+        return UserMapper.MAPPER.toMap(userRepository.save(userEntity));
     }
 
     @Override

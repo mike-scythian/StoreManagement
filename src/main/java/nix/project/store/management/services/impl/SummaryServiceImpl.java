@@ -2,7 +2,9 @@ package nix.project.store.management.services.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import nix.project.store.management.models.Summary;
+import nix.project.store.management.dto.ProductDto;
+import nix.project.store.management.entities.Product;
+import nix.project.store.management.entities.Summary;
 import nix.project.store.management.dto.SummaryDto;
 import nix.project.store.management.dto.mapper.SummaryMapper;
 import nix.project.store.management.dto.ProductBySaleDto;
@@ -86,13 +88,19 @@ public class SummaryServiceImpl implements SummaryService {
                 .map(prod -> new ProductBySaleDto(
                         prod.getProduct(),
                         productService.getProduct(prod.getProduct()).getName(),
-                        summaryRepository.findAll()
-                                        .stream()
-                                        .filter(summary -> Objects.equals(summary.getProduct(), prod.getProduct()))
-                                        .mapToDouble(Summary::getPayment)
-                                        .sum()))
+                        sumByProduct(prod.getProduct())))
                 .sorted((v1, v2) -> -1*(v1.summaryIncome().compareTo(v2.summaryIncome())))
+                .limit(10)
                 .toList();
+    }
+
+    private Double sumByProduct(Long productId){
+
+        return summaryRepository.findAll()
+                .stream()
+                .filter(summary -> Objects.equals(summary.getProduct(),productId))
+                .mapToDouble(Summary::getPayment)
+                .sum();
     }
 
 

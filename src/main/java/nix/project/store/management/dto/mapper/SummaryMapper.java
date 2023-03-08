@@ -1,7 +1,7 @@
 package nix.project.store.management.dto.mapper;
 
 import nix.project.store.management.dto.SummaryDto;
-import nix.project.store.management.models.Summary;
+import nix.project.store.management.entities.Summary;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
