@@ -172,6 +172,32 @@ class StoreServiceTest {
         assertThat(order.getStatus()).isEqualTo(OrderStatus.DONE);
     }
 
+    @Test
+    void shouldChangeLeftoversAfterOrderAccept(){
+
+        var testOrder = initialOrder();
+        var testStore = initialStore();
+        var product = initialProduct();
+        var storeStockTest = new StoreStock(
+                new StoreStockKey(8L, 10L),
+                100.0,
+                new Store(),
+                new Product());
+
+        when(orderService.getOrderEntity(anyLong())).thenReturn(testOrder);
+        when(storeStockRepository.saveAll(anyCollection())).thenReturn(testStore.getStoreStock().stream().toList());
+        when(orderService.saveOrder(any(Order.class))).thenReturn(OrderMapper.MAPPER.toMap(testOrder));
+        when(storeStockRepository.existsById(any(StoreStockKey.class))).thenReturn(true);
+        when(storeStockRepository.findById(any(StoreStockKey.class))).thenReturn(Optional.of(storeStockTest));
+
+        storeService.acceptOrder(1L);
+
+        assertThat(testStore.getStoreStock().size()).isEqualTo(2);
+        assertThat(testStore.getStoreStock()
+                .stream()
+                .mapToDouble(StoreStock::getLeftovers)).contains(200.0,200.0);
+    }
+
     private Store initialStore(){
 
         Set<StoreStock> leftoversSet = new HashSet<>();
