@@ -22,9 +22,9 @@ public class SummaryController {
     SummaryService summaryService;
 
     @GetMapping
-    public ResponseEntity<List<SummaryDto>> statistic(){
+    public ResponseEntity<List<SummaryDto>> statistic(@RequestParam(required = false)Integer page){
 
-        return new ResponseEntity<>(summaryService.getReports(), HttpStatus.CREATED);
+        return new ResponseEntity<>(summaryService.getReports(page), HttpStatus.CREATED);
     }
 
     @GetMapping("/store/{id}")

@@ -2,7 +2,6 @@ package nix.project.store.management.services;
 
 import nix.project.store.management.dto.UserCreateDto;
 import nix.project.store.management.dto.UserDto;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public interface UserService {
 
     UserDto getUser(Long userId);
 
-    List<UserDto> getUsers(Pageable pageable);
+    List<UserDto> getUsers(Integer page);
 
     void updatePassword(String newPassword, String oldPassword);
 

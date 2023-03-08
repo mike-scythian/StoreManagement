@@ -18,6 +18,7 @@ import nix.project.store.management.services.OrderService;
 import nix.project.store.management.services.ProductService;
 import nix.project.store.management.services.StoreService;
 import nix.project.store.management.services.SummaryService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -117,12 +118,14 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public List<StoreDto> getStores(Pageable pageable) {
+    public List<StoreDto> getStores(Integer page) {
 
-        if(pageable != null)
+        if(page != null) {
+            Pageable pageable = PageRequest.of(page, 5);
             return storeRepository.findAll(pageable).stream()
-                .map(StoreMapper.MAPPER::toMap)
-                .toList();
+                    .map(StoreMapper.MAPPER::toMap)
+                    .toList();
+        }
         else
             return storeRepository.findAll().stream()
                     .map(StoreMapper.MAPPER::toMap)

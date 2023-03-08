@@ -8,6 +8,7 @@ import nix.project.store.management.exceptions.ValueExistsAlreadyException;
 import nix.project.store.management.entities.Product;
 import nix.project.store.management.repositories.ProductRepository;
 import nix.project.store.management.services.ProductService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -75,13 +76,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getProducts(Pageable pageable) {
+    public List<ProductDto> getProducts(Integer page) {
 
-        if(pageable != null)
+        if(page != null) {
+            Pageable pageable = PageRequest.of(page, 10);
             return productRepository.findAll(pageable)
-                .stream()
-                .map(mapper::toMap)
-                .toList();
+                    .stream()
+                    .map(mapper::toMap)
+                    .toList();
+        }
         else
             return productRepository.findAll()
                     .stream()

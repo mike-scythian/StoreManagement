@@ -43,15 +43,9 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam int page) {
+    public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam(required = false) Integer page) {
 
-        if(page < 0)
-            return new ResponseEntity<>(userService.getUsers(null), HttpStatus.OK);
-        else {
-            Pageable pageable = PageRequest.of(page, 10);
-
-            return new ResponseEntity<>(userService.getUsers(pageable), HttpStatus.OK);
-        }
+            return new ResponseEntity<>(userService.getUsers(page), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

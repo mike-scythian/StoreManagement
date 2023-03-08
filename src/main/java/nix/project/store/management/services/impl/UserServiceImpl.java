@@ -11,6 +11,7 @@ import nix.project.store.management.entities.UserEntity;
 import nix.project.store.management.repositories.StoreRepository;
 import nix.project.store.management.repositories.UserRepository;
 import nix.project.store.management.services.UserService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +33,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(UserCreateDto userCreateDto) {
 
-        if(userRepository.existsByEmail(userCreateDto.getEmail()))
+        if (userRepository.existsByEmail(userCreateDto.getEmail()))
             throw new ValueExistsAlreadyException();
 
         UserEntity userEntity = UserEntity.builder()
@@ -56,12 +57,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getUsers(Pageable pageable) {
+    public List<UserDto> getUsers(Integer page) {
 
-        if(pageable != null)
+        if (page != null) {
+            Pageable pageable = PageRequest.of(page, 5);
             return userRepository.findAll(pageable).stream()
-                .map(UserMapper.MAPPER::toMap)
-                .toList();
+                    .map(UserMapper.MAPPER::toMap)
+                    .toList();
+        }
         else
             return userRepository.findAll().stream()
                     .map(UserMapper.MAPPER::toMap)
@@ -73,13 +76,12 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = getCurrentUser();
 
-        if (validationPassword(userEntity, oldPassword)) {
+        if (validatePassword(userEntity, oldPassword)) {
 
             userEntity.setPassword(passwordEncoder.encode(newPassword));
 
             userRepository.save(userEntity);
-        }
-        else
+        } else
             throw new InvalidPasswordException();
     }
 
@@ -88,15 +90,13 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = userRepository.findById(userDto.getId())
                 .orElseThrow(DataNotFoundException::new);
-        System.out.println(userEntity.getEmail());
 
-        if(userDto.getFirstName() != null)
+        if (userDto.getFirstName() != null)
             userEntity.setFirstName(userDto.getFirstName());
-        if(userDto.getLastName() != null)
+        if (userDto.getLastName() != null)
             userEntity.setLastName(userDto.getLastName());
-        if(userDto.getRoles() != null)
+        if (userDto.getRoles() != null)
             userEntity.setRoles(userDto.getRoles());
-        System.out.println(userEntity.getLastName());
         return UserMapper.MAPPER.toMap(userRepository.save(userEntity));
     }
 
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(DataNotFoundException::new);
 
-        if(!userEntity.getStore().getId().equals(storeId)) {
+        if (!userEntity.getStore().getId().equals(storeId)) {
             userEntity.setStore(storeRepository.findById(storeId)
                     .orElseThrow(DataNotFoundException::new));
             userRepository.save(userEntity);
@@ -115,18 +115,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long userId) {
-        if(userRepository.existsById(userId))
+        if (userRepository.existsById(userId))
             userRepository.deleteById(userId);
         else
             throw new DataNotFoundException();
     }
 
-    private boolean validationPassword(UserEntity userEntity, String password) {
+    private boolean validatePassword(UserEntity userEntity, String password) {
 
         return passwordEncoder.matches(password, userEntity.getPassword());
     }
 
-    private UserEntity getCurrentUser(){
+    private UserEntity getCurrentUser() {
 
         String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 

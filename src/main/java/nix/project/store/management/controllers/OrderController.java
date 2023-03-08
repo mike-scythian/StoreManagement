@@ -1,7 +1,6 @@
 package nix.project.store.management.controllers;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.ProductQuantityRowDto;
 import nix.project.store.management.dto.ProductRowDto;
@@ -26,8 +25,6 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @Autowired
-    private ObjectMapper jsonMapper;
 
     @PostMapping("/rows")
     @PreAuthorize("hasAuthority('ROLE_USER')")
@@ -44,32 +41,19 @@ public class OrderController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity <List<OrderDto>> findOrders(@RequestParam int page){
+    public ResponseEntity <List<OrderDto>> findOrders(@RequestParam(required = false) Integer page,
+                                                      @RequestParam(required = false) String sortParam){
 
-        if(page < 0)
-            return  new ResponseEntity<>(orderService.getOrders(null), HttpStatus.OK);
-        else {
-
-            Pageable pageable = PageRequest.of(page, 5);
-
-            return new ResponseEntity<>(orderService.getOrders(pageable), HttpStatus.OK);
-        }
-    }
-    @GetMapping("/sort")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity <List<OrderDto>> findOrders(@RequestParam int page, @RequestParam String sortParam){
-
-        Pageable pageable = PageRequest.of(page,5, Sort.by(Sort.Direction.ASC, sortParam));
-
-        return  new ResponseEntity<>(orderService.getOrders(pageable), HttpStatus.OK);
+        return  new ResponseEntity<>(orderService.getOrders(page, sortParam), HttpStatus.OK);
     }
 
     @GetMapping("/stores/{id}")
-    public ResponseEntity <List<OrderDto>> findOrdersByStore(@PathVariable long id, @RequestParam int page){
+    public ResponseEntity <List<OrderDto>> findOrdersByStore(@PathVariable long id,
+                                                             @RequestParam(required = false) Integer page){
 
-        Pageable pageable = PageRequest.of(page,10);
 
-        return new ResponseEntity<>(orderService.getOrdersByStore(id, pageable), HttpStatus.OK);
+
+        return new ResponseEntity<>(orderService.getOrdersByStore(id, page), HttpStatus.OK);
     }
 
     @PutMapping("/{id}/push/")

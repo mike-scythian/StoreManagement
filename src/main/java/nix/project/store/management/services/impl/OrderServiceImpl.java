@@ -1,5 +1,6 @@
 package nix.project.store.management.services.impl;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.ProductQuantityRowDto;
@@ -16,7 +17,9 @@ import nix.project.store.management.repositories.OrderProductRepository;
 import nix.project.store.management.repositories.OrderRepository;
 import nix.project.store.management.services.OrderService;
 import nix.project.store.management.services.ProductService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -83,26 +86,49 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getOrders(Pageable pageable) {
-        if(pageable != null)
+    public List<OrderDto> getOrders(Integer page, String sortParam) {
+
+        Pageable pageable;
+
+        if(page == null)
+            page = orderRepo.findAll().size();
+
+        if(sortParam != null) {
+
+            if(sortParam.equals("createTime"))
+                pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, sortParam));
+            else
+                pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, sortParam));
+
             return orderRepo.findAll(pageable)
                     .stream()
                     .map(order -> getOrder(order.getId()))
                     .toList();
-        else
-            return orderRepo.findAll()
-                .stream()
-                .map(order -> getOrder(order.getId()))
-                .toList();
+        }
+        else {
+            pageable = PageRequest.of(page, 5);
+            return orderRepo.findAll(pageable)
+                    .stream()
+                    .map(order -> getOrder(order.getId()))
+                    .toList();
+        }
     }
 
     @Override
-    public List<OrderDto> getOrdersByStore(Long storeId, Pageable pageable) {
+    public List<OrderDto> getOrdersByStore(Long storeId, Integer page) {
 
-        return orderRepo.findByStore_Id(storeId, pageable)
-                .stream()
-                .map(OrderMapper.MAPPER::toMap)
-                .toList();
+        if(page != null) {
+            Pageable pageable = PageRequest.of(page, 10);
+            return orderRepo.findByStoreId(storeId, pageable)
+                    .stream()
+                    .map(OrderMapper.MAPPER::toMap)
+                    .toList();
+        }
+        else
+            return orderRepo.findByStoreId(storeId)
+                    .stream()
+                    .map(OrderMapper.MAPPER::toMap)
+                    .toList();
     }
 
     @Override
@@ -133,7 +159,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteRow(ProductQuantityRowDto productQuantityRowDto) {
+    public void deleteRow(@NonNull ProductQuantityRowDto productQuantityRowDto) {
 
         OrderProductKey key = new OrderProductKey(productQuantityRowDto.ownerId(), productQuantityRowDto.productId());
 

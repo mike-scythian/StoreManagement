@@ -2,8 +2,6 @@ package nix.project.store.management.services.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import nix.project.store.management.dto.ProductDto;
-import nix.project.store.management.entities.Product;
 import nix.project.store.management.entities.Summary;
 import nix.project.store.management.dto.SummaryDto;
 import nix.project.store.management.dto.mapper.SummaryMapper;
@@ -11,6 +9,8 @@ import nix.project.store.management.dto.ProductBySaleDto;
 import nix.project.store.management.repositories.SummaryRepository;
 import nix.project.store.management.services.ProductService;
 import nix.project.store.management.services.SummaryService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -40,20 +40,29 @@ public class SummaryServiceImpl implements SummaryService {
     }
 
     @Override
-    public List<SummaryDto> getReports() {
-        return summaryRepository.findAll()
-                .stream()
-                .map(SummaryMapper.MAPPER::toMap)
-                .toList();
+    public List<SummaryDto> getReports(Integer page) {
+        if (page != null) {
+            Pageable pageable = PageRequest.of(page, 10);
+            return summaryRepository.findAll(pageable)
+                    .stream()
+                    .map(SummaryMapper.MAPPER::toMap)
+                    .toList();
+        } else
+            return summaryRepository.findAll()
+                    .stream()
+                    .map(SummaryMapper.MAPPER::toMap)
+                    .toList();
     }
 
     @Override
     public List<SummaryDto> getByStore(Long storeId) {
 
-        return summaryRepository.findByStore(storeId)
+            return summaryRepository.findByStore(storeId)
                 .stream()
                 .map(SummaryMapper.MAPPER::toMap)
                 .toList();
+
+
     }
 
     @Override
@@ -66,7 +75,7 @@ public class SummaryServiceImpl implements SummaryService {
 
     @Override
     public List<SummaryDto> getByStoreForPeriod(Long storeId, LocalDateTime startDate, LocalDateTime finishDate) {
-        return summaryRepository.findByStoreAndTimeOperationBetween(storeId,startDate,finishDate)
+        return summaryRepository.findByStoreAndTimeOperationBetween(storeId, startDate, finishDate)
                 .stream()
                 .map(SummaryMapper.MAPPER::toMap)
                 .toList();
@@ -74,7 +83,7 @@ public class SummaryServiceImpl implements SummaryService {
 
     @Override
     public List<SummaryDto> getByProductForPeriod(Long productId, LocalDateTime startDate, LocalDateTime finishDate) {
-        return summaryRepository.findByProductAndTimeOperationBetween(productId,startDate,finishDate)
+        return summaryRepository.findByProductAndTimeOperationBetween(productId, startDate, finishDate)
                 .stream()
                 .map(SummaryMapper.MAPPER::toMap)
                 .toList();
@@ -89,16 +98,16 @@ public class SummaryServiceImpl implements SummaryService {
                         prod.getProduct(),
                         productService.getProduct(prod.getProduct()).getName(),
                         sumByProduct(prod.getProduct())))
-                .sorted((v1, v2) -> -1*(v1.summaryIncome().compareTo(v2.summaryIncome())))
+                .sorted((v1, v2) -> -1 * (v1.summaryIncome().compareTo(v2.summaryIncome())))
                 .limit(10)
                 .toList();
     }
 
-    private Double sumByProduct(Long productId){
+    private Double sumByProduct(Long productId) {
 
         return summaryRepository.findAll()
                 .stream()
-                .filter(summary -> Objects.equals(summary.getProduct(),productId))
+                .filter(summary -> Objects.equals(summary.getProduct(), productId))
                 .mapToDouble(Summary::getPayment)
                 .sum();
     }

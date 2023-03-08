@@ -10,7 +10,7 @@ public interface SummaryService {
 
     void createReport(Long productId, Double saleSum, Long storeId);
 
-    List<SummaryDto> getReports();
+    List<SummaryDto> getReports(Integer page);
 
     List<SummaryDto> getByStore(Long storeId);
 

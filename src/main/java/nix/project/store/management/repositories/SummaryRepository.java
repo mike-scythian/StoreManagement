@@ -19,11 +19,4 @@ public interface SummaryRepository extends JpaRepository<Summary, Long> {
     List<Summary> findByProduct(Long productId);
     List<Summary> findByStore(Long id);
 
-   /* @Query(
-            value ="SELECT p_id, SUM(p) " +
-                    "FROM nix_project.summary " +
-                    "GROUP BY product_id",
-            nativeQuery = true
-    )
-    List<ProductBySaleDto> findTopTenProducts();*/
 }

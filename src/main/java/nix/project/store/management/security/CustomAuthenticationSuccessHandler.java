@@ -4,7 +4,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 import nix.project.store.management.entities.UserEntity;
 import nix.project.store.management.exceptions.DataNotFoundException;
 import nix.project.store.management.repositories.UserRepository;
@@ -22,13 +21,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
-    private  UserRepository userRepository;
+    private UserRepository userRepository;
 
-    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+    private static final String BASE_ADMIN_URL = "http://localhost:3000/stores";
 
 
     @Override
@@ -50,7 +50,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String targetUrl = determineTargetUrl(authentication);
 
         if (response.isCommitted())
-             return;
+            return;
 
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
@@ -61,8 +61,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .orElseThrow(DataNotFoundException::new);
 
         Map<String, String> roleTargetUrlMap = new HashMap<>();
-        roleTargetUrlMap.put("ROLE_USER", "/stores/"+ currentUser.getStore().getId());
-        roleTargetUrlMap.put("ROLE_ADMIN", "/summary");
+        roleTargetUrlMap.put("ROLE_USER", "/stores/" + currentUser.getStore().getId());
+        roleTargetUrlMap.put("ROLE_ADMIN", BASE_ADMIN_URL);
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
@@ -70,7 +70,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
             String authorityName = grantedAuthority.getAuthority();
 
-            if(roleTargetUrlMap.containsKey(authorityName))
+            if (roleTargetUrlMap.containsKey(authorityName))
                 return roleTargetUrlMap.get(authorityName);
         }
 

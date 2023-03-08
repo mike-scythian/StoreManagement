@@ -2,6 +2,7 @@ package nix.project.store.management.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 
 @Entity
@@ -27,6 +28,7 @@ public class UserEntity {
 
     @Column(name = "email")
     @NonNull
+    @Email
     private String email;
 
     @Column(name = "password")

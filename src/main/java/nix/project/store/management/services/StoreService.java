@@ -3,7 +3,6 @@ package nix.project.store.management.services;
 import nix.project.store.management.dto.*;
 import nix.project.store.management.entities.Store;
 import nix.project.store.management.entities.enums.OrderStatus;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +20,7 @@ public interface StoreService {
     StoreDto getStore(Long storeId);
     Store getStoreEntity(Long storeId);
 
-    List<StoreDto> getStores(Pageable pageable);
+    List<StoreDto> getStores(Integer page);
 
     StoreDto update(Long storeId, String name);
 
