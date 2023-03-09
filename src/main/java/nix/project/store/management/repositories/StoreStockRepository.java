@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 public interface StoreStockRepository extends JpaRepository<StoreStock, StoreStockKey> {
-    List<StoreStock> findByStore_Id(Long id);
+    List<StoreStock> findByStoreId(Long id);
 
-    List<StoreStock> findAll();
+
 }

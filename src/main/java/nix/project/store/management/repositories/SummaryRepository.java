@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface SummaryRepository extends JpaRepository<Summary, Long> {
 
-    List<Summary> findAll();
     List<Summary> findByProductAndTimeOperationBetween(Long productId, LocalDateTime timeOperationStart, LocalDateTime timeOperationEnd);
     List<Summary> findByStoreAndTimeOperationBetween(Long storeId,
                                                      LocalDateTime timeOperationStart,

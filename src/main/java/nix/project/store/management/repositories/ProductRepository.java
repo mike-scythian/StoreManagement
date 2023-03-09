@@ -12,7 +12,4 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product,Long> {
     boolean existsByNameAndType(String name, String type);
 
-    List<Product> findAll();
-
-    Page<Product> findAll(Pageable pageable);
 }

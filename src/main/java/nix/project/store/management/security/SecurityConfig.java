@@ -38,7 +38,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/**").authenticated()
                 .and()
-                .formLogin()
+                .formLogin().permitAll()
+                .loginPage("/login")
+                .loginProcessingUrl("/perform-login")
+                .usernameParameter("user")
+                .passwordParameter("pass")
                 .successHandler(customAuthenticationSuccessHandler())
                 .and()
                 .build();

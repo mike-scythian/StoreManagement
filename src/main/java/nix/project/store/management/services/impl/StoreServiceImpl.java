@@ -198,7 +198,7 @@ public class StoreServiceImpl implements StoreService {
 
         if (storeRepository.existsById(storeId)) {
 
-            List<StoreStock> stockList = storeStockRepository.findByStore_Id(storeId);
+            List<StoreStock> stockList = storeStockRepository.findByStoreId(storeId);
 
             storeStockRepository.deleteAll(stockList);
             storeRepository.deleteById(storeId);

@@ -151,7 +151,7 @@ public class OrderServiceImpl implements OrderService {
 
         if (orderRepo.existsById(orderId)) {
 
-            orderProductRepo.deleteById_OrderId(orderId);
+            orderProductRepo.deleteByIdOrderId(orderId);
             orderRepo.deleteById(orderId);
 
         } else
