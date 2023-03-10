@@ -1,4 +1,4 @@
-Stores Management Project
+##Stores Management Project
 
 The purpose of this project is to help small businesses organize fast and efficient 
 communication and delivery of goods between the seller and the manager.
