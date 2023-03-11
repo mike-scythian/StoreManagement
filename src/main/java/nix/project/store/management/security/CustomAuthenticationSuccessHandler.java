@@ -26,9 +26,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @Autowired
     private UserRepository userRepository;
 
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     private static final String BASE_ADMIN_URL = "http://localhost:3000/stores";
+    private static final String BASE_USER_URL = "http://localhost:3000/store/";
+
 
 
     @Override
@@ -61,7 +63,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .orElseThrow(DataNotFoundException::new);
 
         Map<String, String> roleTargetUrlMap = new HashMap<>();
-        roleTargetUrlMap.put("ROLE_USER", "/stores/" + currentUser.getStore().getId());
+        roleTargetUrlMap.put("ROLE_USER", BASE_USER_URL + currentUser.getStore().getId());
         roleTargetUrlMap.put("ROLE_ADMIN", BASE_ADMIN_URL);
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

@@ -1,11 +1,10 @@
 package nix.project.store.management.controllers;
 
+import nix.project.store.management.dto.RequestUpdatePasswordDto;
 import nix.project.store.management.dto.UserCreateDto;
 import nix.project.store.management.dto.UserDto;
 import nix.project.store.management.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,9 +28,11 @@ public class UserController {
 
     @PatchMapping("/password")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Void> updatePassword(@RequestParam String oldPassword, @RequestParam String newPassword) {
+    public ResponseEntity<Void> updatePassword(@RequestBody RequestUpdatePasswordDto request) {
 
-        userService.updatePassword(newPassword, oldPassword);
+        System.out.println(request);
+
+        userService.updatePassword(request.newPassword(), request.oldPassword());
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
