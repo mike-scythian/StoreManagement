@@ -53,7 +53,7 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrdersByStore(id, page), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/push/")
+    @PutMapping("/push/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity <OrderStatus> pushOrder(@PathVariable long id){
 

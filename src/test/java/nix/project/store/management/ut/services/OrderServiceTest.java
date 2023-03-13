@@ -1,4 +1,4 @@
-package ut.services;
+package nix.project.store.management.ut.services;
 
 import nix.project.store.management.dto.ProductDto;
 import nix.project.store.management.dto.ProductQuantityRowDto;
@@ -14,7 +14,6 @@ import nix.project.store.management.repositories.OrderProductRepository;
 import nix.project.store.management.repositories.OrderRepository;
 import nix.project.store.management.services.impl.OrderServiceImpl;
 import nix.project.store.management.services.impl.ProductServiceImpl;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

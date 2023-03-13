@@ -10,6 +10,6 @@ public class DisableSecurity {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .requestMatchers("");
+                .requestMatchers("/");
     }
 }

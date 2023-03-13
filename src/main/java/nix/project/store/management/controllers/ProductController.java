@@ -3,8 +3,6 @@ package nix.project.store.management.controllers;
 import nix.project.store.management.dto.ProductDto;
 import nix.project.store.management.services.impl.ProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,7 +34,7 @@ public class ProductController {
     @GetMapping()
     public ResponseEntity<List<ProductDto>> getAllProducts(@RequestParam(required = false) Integer page) {
 
-            return new ResponseEntity<>(productService.getProducts(page), HttpStatus.CREATED);
+            return new ResponseEntity<>(productService.getProducts(page), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -50,6 +48,6 @@ public class ProductController {
 
        productService.delete(id);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

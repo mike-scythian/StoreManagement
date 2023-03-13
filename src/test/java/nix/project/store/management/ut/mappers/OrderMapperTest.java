@@ -1,6 +1,5 @@
-package ut.mappers;
+package nix.project.store.management.ut.mappers;
 
-import nix.project.store.management.dto.OrderDto;
 import nix.project.store.management.dto.mapper.OrderMapper;
 import nix.project.store.management.entities.Order;
 import nix.project.store.management.entities.OrderProduct;

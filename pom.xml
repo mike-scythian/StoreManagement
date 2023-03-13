@@ -29,6 +29,8 @@
 		<hibernate-validator-version>8.0.0.Final</hibernate-validator-version>
 		<jjwt-version>0.11.5</jjwt-version>
 		<h2-version>2.1.214</h2-version>
+		<spring-web-flux-version>6.0.4</spring-web-flux-version>
+		<spring-boot-web-flux-starter-version>3.0.0</spring-boot-web-flux-starter-version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -131,10 +133,22 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webflux</artifactId>
+			<version>${spring-web-flux-version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
+			<version>${spring-boot-web-flux-starter-version}</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>

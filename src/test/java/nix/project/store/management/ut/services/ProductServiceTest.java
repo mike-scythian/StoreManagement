@@ -1,4 +1,4 @@
-package ut.services;
+package nix.project.store.management.ut.services;
 
 import nix.project.store.management.dto.ProductDto;
 import nix.project.store.management.dto.mapper.ProductMapper;

@@ -11,5 +11,4 @@ public class StoreManagementApplication {
 		SpringApplication.run(StoreManagementApplication.class, args);
 
 	}
-
 }

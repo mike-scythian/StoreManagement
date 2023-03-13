@@ -27,7 +27,7 @@ public class StoreController {
         return new ResponseEntity<>(storeService.create(storeName), HttpStatus.CREATED);
     }
 
-    @PostMapping("{id}/orders")
+    @PostMapping("/orders/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<OrderDto> createOrder(@RequestBody long storeId) {
 
@@ -47,26 +47,20 @@ public class StoreController {
         return new ResponseEntity<>(storeService.getStore(id), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/sellers")
+    @GetMapping("/sellers/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Set<UserDto>> getSellerSet(@PathVariable long id) {
 
         return new ResponseEntity<>(storeService.getSellers(id), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/orders")
-    public ResponseEntity<List<OrderDto>> getOrderList(@PathVariable long id) {
-
-        return new ResponseEntity<>(storeService.getOrders(id), HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}/stocks")
+    @GetMapping("/stocks/{id}")
     public ResponseEntity<List<ProductRowDto>> getLeftovers(@PathVariable long id) {
 
         return new ResponseEntity<>(storeService.getLeftovers(id), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}/accept")
+    @PutMapping("/accept/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<OrderStatus> acceptOrder(@PathVariable long id) {
 
@@ -82,7 +76,7 @@ public class StoreController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @PutMapping("/selling")
+    @PutMapping("/sale")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Double> saleProduct(@RequestBody ProductQuantityRowDto productQuantityRow) {
 

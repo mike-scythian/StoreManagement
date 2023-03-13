@@ -33,13 +33,13 @@ public class SummaryController {
         return new ResponseEntity<>(summaryService.getByStore(id), HttpStatus.CREATED);
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/products/{id}")
     public ResponseEntity<List<SummaryDto>> getReportsByProduct(@PathVariable long id){
 
         return new ResponseEntity<>(summaryService.getByProduct(id), HttpStatus.CREATED);
     }
 
-    @GetMapping("/store/{id}/by-period")
+    @GetMapping("/stores/{id}/by-period")
     public ResponseEntity<List<SummaryDto>> getReportsFromStoreByPeriod(@PathVariable long storeId ,
                                                                         @RequestParam LocalDate start,
                                                                         @RequestParam LocalDate end){
@@ -50,7 +50,7 @@ public class SummaryController {
                 end.atTime(LocalTime.parse("23:59:59"))), HttpStatus.CREATED);
     }
 
-    @GetMapping("/store/{id}/by-id")
+    @GetMapping("/stores/{id}/by-id")
     public ResponseEntity<List<SummaryDto>> getReportsByProductByPeriod(@PathVariable long productId ,
                                                                         @RequestParam LocalDate start,
                                                                         @RequestParam LocalDate end){
@@ -61,7 +61,7 @@ public class SummaryController {
                 end.atTime(LocalTime.parse("23:59:59"))), HttpStatus.CREATED);
     }
 
-    @GetMapping("/top-products")
+    @GetMapping("/products/top")
     public ResponseEntity<List<ProductBySaleDto>> getTopTenProducts(){
 
         return new ResponseEntity<>(summaryService.getTopTenProducts(), HttpStatus.CREATED);

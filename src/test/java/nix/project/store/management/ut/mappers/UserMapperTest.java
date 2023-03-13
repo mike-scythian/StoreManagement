@@ -1,4 +1,4 @@
-package ut.mappers;
+package nix.project.store.management.ut.mappers;
 
 import nix.project.store.management.dto.UserDto;
 import nix.project.store.management.dto.mapper.UserMapper;

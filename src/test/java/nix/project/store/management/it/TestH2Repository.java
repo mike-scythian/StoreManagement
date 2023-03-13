@@ -1,4 +1,4 @@
-package it;
+package nix.project.store.management.it;
 
 
 import nix.project.store.management.entities.Product;

@@ -30,8 +30,6 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> updatePassword(@RequestBody RequestUpdatePasswordDto request) {
 
-        System.out.println(request);
-
         userService.updatePassword(request.newPassword(), request.oldPassword());
 
         return new ResponseEntity<>(HttpStatus.CREATED);
