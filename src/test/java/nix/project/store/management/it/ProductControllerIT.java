@@ -40,8 +40,6 @@ class ProductControllerIT {
 
     @Autowired
     private ObjectMapper jsonMapper;
-    @Autowired
-    private TestH2Repository testH2Repository;
 
     private ProductDto testProduct;
 
@@ -59,8 +57,8 @@ class ProductControllerIT {
 
     @WithMockUser(username = "admin@email.com", password = "Q", authorities = {"ROLE_ADMIN"})
     @Test
-    @Sql(value = "/db-test/001-create-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/002-drop-table-products.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-after.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldCreateNewProduct() throws Exception {
 
         String productJson = jsonMapper.writeValueAsString(testProduct);
@@ -73,9 +71,8 @@ class ProductControllerIT {
 
     @WithMockUser(username = "admin@email.com", password = "Q", authorities = {"ROLE_ADMIN"})
     @Test
-    @Sql(value = "/db-test/001-create-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/003-insert-data-in-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/002-drop-table-products.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-after.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldUpdateProductInfo() throws Exception {
 
 
@@ -90,9 +87,8 @@ class ProductControllerIT {
 
     @WithMockUser(username = "admin@email.com", password = "Q", authorities = {"ROLE_ADMIN"})
     @Test
-    @Sql(value = "/db-test/001-create-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/003-insert-data-in-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/002-drop-table-products.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-after.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldGetAllProducts() throws Exception {
 
         MvcResult response = mockMvc.perform(get(baseUrl))
@@ -107,9 +103,8 @@ class ProductControllerIT {
 
     @WithMockUser(username = "admin@email.com", password = "Q", authorities = {"ROLE_ADMIN"})
     @Test
-    @Sql(value = "/db-test/001-create-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/003-insert-data-in-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/002-drop-table-products.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-after.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldGetProductById() throws Exception {
 
         mockMvc.perform(get(baseUrl + "/11"))
@@ -120,9 +115,8 @@ class ProductControllerIT {
 
     @WithMockUser(username = "admin@email.com", password = "Q", authorities = {"ROLE_ADMIN"})
     @Test
-    @Sql(value = "/db-test/001-create-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/003-insert-data-in-table-products.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(value = "/db-test/002-drop-table-products.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(value = "/db-test/product-test-db-setup-after.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void shouldDeleteProduct() throws Exception {
 
         List<ProductDto> productList = getProducts(mockMvc);

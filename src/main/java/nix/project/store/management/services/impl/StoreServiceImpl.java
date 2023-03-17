@@ -194,6 +194,7 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    @Transactional
     public void delete(Long storeId) {
 
         if (storeRepository.existsById(storeId)) {

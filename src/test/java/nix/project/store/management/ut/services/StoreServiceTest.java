@@ -18,7 +18,6 @@ import nix.project.store.management.services.OrderService;
 import nix.project.store.management.services.ProductService;
 import nix.project.store.management.services.SummaryService;
 import nix.project.store.management.services.impl.StoreServiceImpl;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

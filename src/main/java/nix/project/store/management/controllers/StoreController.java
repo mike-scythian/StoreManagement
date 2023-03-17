@@ -27,9 +27,9 @@ public class StoreController {
         return new ResponseEntity<>(storeService.create(storeName), HttpStatus.CREATED);
     }
 
-    @PostMapping("/orders/{id}")
+    @PostMapping("/orders/{storeId}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<OrderDto> createOrder(@RequestBody long storeId) {
+    public ResponseEntity<OrderDto> createOrder(@PathVariable long storeId) {
 
         return new ResponseEntity<>(storeService.createEmptyOrder(storeId), HttpStatus.CREATED);
     }
@@ -49,7 +49,7 @@ public class StoreController {
 
     @GetMapping("/sellers/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Set<UserDto>> getSellerSet(@PathVariable long id) {
+    public ResponseEntity<Set<UserDto>> getSellers(@PathVariable long id) {
 
         return new ResponseEntity<>(storeService.getSellers(id), HttpStatus.OK);
     }
@@ -73,10 +73,10 @@ public class StoreController {
 
         storeService.update(id, newName);
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/sale")
+    @PatchMapping("/sale")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Double> saleProduct(@RequestBody ProductQuantityRowDto productQuantityRow) {
 

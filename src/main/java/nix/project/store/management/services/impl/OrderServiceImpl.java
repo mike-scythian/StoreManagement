@@ -1,5 +1,6 @@
 package nix.project.store.management.services.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import nix.project.store.management.dto.OrderDto;
@@ -88,10 +89,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getOrders(Integer page, String sortParam) {
 
+        if(page == null && sortParam == null)
+            return orderRepo.findAll()
+                    .stream()
+                    .map(order -> getOrder(order.getId()))
+                    .toList();;
+
         Pageable pageable;
 
         if(page == null)
-            page = orderRepo.findAll().size();
+            page = 0;
 
         if(sortParam != null) {
 
@@ -147,6 +154,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public void delete(Long orderId) {
 
         if (orderRepo.existsById(orderId)) {

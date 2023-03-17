@@ -33,7 +33,7 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity <List<ProductRowDto>> findOrder(@PathVariable long id)  {
 
-        return new ResponseEntity<>(orderService.getOrderBody(id), HttpStatus.CREATED);
+        return new ResponseEntity<>(orderService.getOrderBody(id), HttpStatus.OK);
     }
 
     @GetMapping
@@ -54,7 +54,7 @@ public class OrderController {
     }
 
     @PutMapping("/push/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity <OrderStatus> pushOrder(@PathVariable long id){
 
         return new ResponseEntity<>(orderService.pushOrder(id), HttpStatus.ACCEPTED);
@@ -65,13 +65,13 @@ public class OrderController {
     public ResponseEntity <Void> deleteOrder(@PathVariable long id){
 
         orderService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/rows")
     public ResponseEntity <Void> deleteOrderRow(@RequestBody ProductQuantityRowDto productQuantityRowDto){
 
         orderService.deleteRow(productQuantityRowDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

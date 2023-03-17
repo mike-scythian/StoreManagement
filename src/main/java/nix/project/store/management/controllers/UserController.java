@@ -32,12 +32,12 @@ public class UserController {
 
         userService.updatePassword(request.newPassword(), request.oldPassword());
 
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping
     public ResponseEntity<UserDto> updateUserInfo(@RequestBody UserDto userDto) {
-        return new ResponseEntity<>(userService.updateUser(userDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.updateUser(userDto), HttpStatus.OK);
     }
 
     @GetMapping
@@ -50,7 +50,7 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> findUser(@PathVariable long id) {
 
-        return new ResponseEntity<>(userService.getUser(id), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.getUser(id), HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
@@ -58,7 +58,7 @@ public class UserController {
     public ResponseEntity<Void> changeStore(@PathVariable long id, @RequestParam long newStoreId) {
 
         userService.changeStore(id, newStoreId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
