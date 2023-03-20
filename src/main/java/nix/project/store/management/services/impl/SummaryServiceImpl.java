@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,7 +58,7 @@ public class SummaryServiceImpl implements SummaryService {
     @Override
     public List<SummaryDto> getByStore(Long storeId) {
 
-            return summaryRepository.findByStore(storeId)
+            return summaryRepository.findByStore(storeId )
                 .stream()
                 .map(SummaryMapper.MAPPER::toMap)
                 .toList();
@@ -99,6 +100,7 @@ public class SummaryServiceImpl implements SummaryService {
                         productService.getProduct(prod.getProduct()).getName(),
                         sumByProduct(prod.getProduct())))
                 .sorted((v1, v2) -> -1 * (v1.summaryIncome().compareTo(v2.summaryIncome())))
+                .distinct()
                 .limit(10)
                 .toList();
     }

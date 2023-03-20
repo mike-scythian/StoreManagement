@@ -20,7 +20,7 @@ public class StoreController {
     private StoreService storeService;
 
 
-    @PostMapping
+    @PostMapping("/new")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Long> createStore(@RequestParam String storeName) {
 
@@ -67,7 +67,7 @@ public class StoreController {
         return new ResponseEntity<>(storeService.acceptOrder(id), HttpStatus.ACCEPTED);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/update/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> updateInfo(@PathVariable long id, @RequestParam String newName) {
 

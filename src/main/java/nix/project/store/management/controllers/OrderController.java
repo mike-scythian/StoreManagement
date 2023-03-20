@@ -23,7 +23,7 @@ public class OrderController {
     private OrderService orderService;
 
 
-    @PostMapping("/rows")
+    @PostMapping("/rows/{orderId}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity <OrderProductKey> createRowInOrder(@RequestBody ProductQuantityRowDto productDto){
 
@@ -36,6 +36,12 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getOrderBody(id), HttpStatus.OK);
     }
 
+    @GetMapping("/info/{id}")
+    public ResponseEntity <OrderDto> getOrder(@PathVariable long id){
+
+        return new ResponseEntity<>(orderService.getOrder(id), HttpStatus.OK);
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity <List<OrderDto>> findOrders(@RequestParam(required = false) Integer page,
@@ -44,7 +50,7 @@ public class OrderController {
         return  new ResponseEntity<>(orderService.getOrders(page, sortParam), HttpStatus.OK);
     }
 
-    @GetMapping("/stores/{id}")
+    @GetMapping("/store/{id}")
     public ResponseEntity <List<OrderDto>> findOrdersByStore(@PathVariable long id,
                                                              @RequestParam(required = false) Integer page){
 

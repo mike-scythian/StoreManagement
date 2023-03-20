@@ -27,7 +27,7 @@ public class SummaryController {
         return new ResponseEntity<>(summaryService.getReports(page), HttpStatus.CREATED);
     }
 
-    @GetMapping("/store/{id}")
+    @GetMapping("/stores/{id}")
     public ResponseEntity<List<SummaryDto>> getReportsByStore(@PathVariable long id){
 
         return new ResponseEntity<>(summaryService.getByStore(id), HttpStatus.CREATED);
@@ -39,24 +39,24 @@ public class SummaryController {
         return new ResponseEntity<>(summaryService.getByProduct(id), HttpStatus.CREATED);
     }
 
-    @GetMapping("/stores/{id}/by-period")
-    public ResponseEntity<List<SummaryDto>> getReportsFromStoreByPeriod(@PathVariable long storeId ,
+    @GetMapping("/stores/by-period/{id}")
+    public ResponseEntity<List<SummaryDto>> getReportsFromStoreByPeriod(@PathVariable long id,
                                                                         @RequestParam LocalDate start,
                                                                         @RequestParam LocalDate end){
 
         return new ResponseEntity<>(summaryService.getByStoreForPeriod(
-                storeId,
+                id,
                 start.atTime(LocalTime.parse("00:00:00")),
                 end.atTime(LocalTime.parse("23:59:59"))), HttpStatus.CREATED);
     }
 
-    @GetMapping("/stores/{id}/by-id")
-    public ResponseEntity<List<SummaryDto>> getReportsByProductByPeriod(@PathVariable long productId ,
+    @GetMapping("/products/by-period/{id}")
+    public ResponseEntity<List<SummaryDto>> getReportsByProductByPeriod(@PathVariable long id,
                                                                         @RequestParam LocalDate start,
                                                                         @RequestParam LocalDate end){
 
         return new ResponseEntity<>(summaryService.getByProductForPeriod(
-                productId,
+                id,
                 start.atTime(LocalTime.parse("00:00:00")),
                 end.atTime(LocalTime.parse("23:59:59"))), HttpStatus.CREATED);
     }

@@ -62,7 +62,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .orElseThrow(DataNotFoundException::new);
 
         Map<String, String> roleTargetUrlMap = new HashMap<>();
-        roleTargetUrlMap.put("ROLE_USER", BASE_URL + currentUser.getStore().getId());
+        roleTargetUrlMap.put("ROLE_USER", BASE_URL + "/" + currentUser.getStore().getId());
         roleTargetUrlMap.put("ROLE_ADMIN", BASE_URL);
 
         final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

@@ -1,5 +1,6 @@
 package nix.project.store.management.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class Summary {
     private Double payment;
 
     @Column(name="date_time")
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime timeOperation;
 
     @Column(name="store")

@@ -85,7 +85,7 @@ class ProductControllerIT {
                 .andExpect(jsonPath("$.name").value("Potato"));
     }
 
-    @WithMockUser(username = "admin@email.com", password = "Q", authorities = {"ROLE_ADMIN"})
+    @WithMockUser(username = "admin@email.com", password = "Q", authorities = {"ROLE_USER"})
     @Test
     @Sql(value = "/db-test/product-test-db-setup-before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/db-test/product-test-db-setup-after.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)

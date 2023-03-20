@@ -97,6 +97,7 @@ public class StoreServiceImpl implements StoreService {
 
         return store.getStoreStock().stream()
                 .map(row -> new ProductRowDto(
+                        row.productId(),
                         productService.getProduct(row.productId()).getName(),
                         productService.getProduct(row.productId()).getType(),
                         row.getLeftovers()))

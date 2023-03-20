@@ -19,7 +19,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping
+    @PostMapping("/new")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<UserDto> createUser(@RequestBody UserCreateDto userDto) {
 
@@ -35,7 +35,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUserInfo(@RequestBody UserDto userDto) {
         return new ResponseEntity<>(userService.updateUser(userDto), HttpStatus.OK);
     }

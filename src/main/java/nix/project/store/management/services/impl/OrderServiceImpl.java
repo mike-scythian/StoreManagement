@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = orderRepo.findById(productQuantityRowDto.ownerId()).orElseThrow(DataNotFoundException::new);
 
-        if(order.getStatus() == OrderStatus.DONE)
+        if (order.getStatus() == OrderStatus.DONE)
             throw new RuntimeException();
 
         OrderProduct orderRow = new OrderProduct();
@@ -74,6 +74,7 @@ public class OrderServiceImpl implements OrderService {
 
         return order.getOrderBody().stream()
                 .map(row -> new ProductRowDto(
+                        row.getProductId(),
                         productService.getProduct(row.getProductId()).getName(),
                         productService.getProduct(row.getProductId()).getType(),
                         row.getQuantity()))
@@ -89,30 +90,25 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getOrders(Integer page, String sortParam) {
 
-        if(page == null && sortParam == null)
+        if (page == null && sortParam == null)
             return orderRepo.findAll()
                     .stream()
                     .map(order -> getOrder(order.getId()))
-                    .toList();;
+                    .toList();
 
         Pageable pageable;
 
-        if(page == null)
+        if (page == null)
             page = 0;
 
-        if(sortParam != null) {
-
-            if(sortParam.equals("createTime"))
-                pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, sortParam));
-            else
-                pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, sortParam));
+        if (sortParam != null) {
+            pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, sortParam));
 
             return orderRepo.findAll(pageable)
                     .stream()
                     .map(order -> getOrder(order.getId()))
                     .toList();
-        }
-        else {
+        } else {
             pageable = PageRequest.of(page, 5);
             return orderRepo.findAll(pageable)
                     .stream()
@@ -124,14 +120,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getOrdersByStore(Long storeId, Integer page) {
 
-        if(page != null) {
+        if (page != null) {
             Pageable pageable = PageRequest.of(page, 10);
             return orderRepo.findByStoreId(storeId, pageable)
                     .stream()
                     .map(OrderMapper.MAPPER::toMap)
                     .toList();
-        }
-        else
+        } else
             return orderRepo.findByStoreId(storeId)
                     .stream()
                     .map(OrderMapper.MAPPER::toMap)

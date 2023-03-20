@@ -12,20 +12,22 @@ import java.util.List;
 
 
 @RestController
-@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+
 @RequestMapping("/products")
 public class ProductController {
 
     @Autowired
     private ProductServiceImpl productService;
 
-    @PostMapping()
+    @PostMapping("/new")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
 
         return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ProductDto> updateProduct(@PathVariable long id, @RequestBody ProductDto productDto) {
 
         return new ResponseEntity<>(productService.update(id, productDto), HttpStatus.OK);
@@ -38,12 +40,14 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<ProductDto> getProductById(@PathVariable long id) {
 
         return new ResponseEntity<>(productService.getProduct(id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteProduct(@PathVariable long id) {
 
        productService.delete(id);
