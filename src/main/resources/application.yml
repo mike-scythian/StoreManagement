@@ -11,4 +11,4 @@ spring:
     hibernate:
       ddl-auto: update
 
-jwt-token-secret: ${TOKEN-SECRET}
+scheduled-start-time: 0 0 9 * * *

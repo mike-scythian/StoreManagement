@@ -30,4 +30,6 @@ public interface OrderService {
 
     OrderStatus pushOrder(Long orderId);
 
+    void processOrder();
+
 }

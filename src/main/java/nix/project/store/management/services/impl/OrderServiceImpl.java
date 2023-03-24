@@ -21,6 +21,7 @@ import nix.project.store.management.services.ProductService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 
@@ -30,9 +31,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderRepository orderRepo;
+    private final OrderRepository orderRepository;
 
-    private final OrderProductRepository orderProductRepo;
+    private final OrderProductRepository orderProductRepository;
 
     private final ProductService productService;
 
@@ -40,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderProductKey addRow(ProductQuantityRowDto productQuantityRowDto) {
 
-        Order order = orderRepo.findById(productQuantityRowDto.ownerId()).orElseThrow(DataNotFoundException::new);
+        Order order = orderRepository.findById(productQuantityRowDto.ownerId()).orElseThrow(DataNotFoundException::new);
 
         if (order.getStatus() == OrderStatus.DONE)
             throw new RuntimeException();
@@ -55,13 +56,13 @@ public class OrderServiceImpl implements OrderService {
 
         orderRow.setId(new OrderProductKey(productQuantityRowDto.ownerId(), productQuantityRowDto.productId()));
 
-        return orderProductRepo.save(orderRow).getId();
+        return orderProductRepository.save(orderRow).getId();
     }
 
     @Override
     public OrderDto getOrder(Long orderId) {
 
-        Order order = orderRepo.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(DataNotFoundException::new);
 
         return OrderMapper.MAPPER.toMap(order);
@@ -70,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<ProductRowDto> getOrderBody(Long orderId) {
-        Order order = orderRepo.findById(orderId).orElseThrow(DataNotFoundException::new);
+        Order order = orderRepository.findById(orderId).orElseThrow(DataNotFoundException::new);
 
         return order.getOrderBody().stream()
                 .map(row -> new ProductRowDto(
@@ -83,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order getOrderEntity(Long orderId) {
-        return orderRepo.findById(orderId)
+        return orderRepository.findById(orderId)
                 .orElseThrow(DataNotFoundException::new);
     }
 
@@ -91,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> getOrders(Integer page, String sortParam) {
 
         if (page == null && sortParam == null)
-            return orderRepo.findAll()
+            return orderRepository.findAll()
                     .stream()
                     .map(order -> getOrder(order.getId()))
                     .toList();
@@ -104,13 +105,13 @@ public class OrderServiceImpl implements OrderService {
         if (sortParam != null) {
             pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, sortParam));
 
-            return orderRepo.findAll(pageable)
+            return orderRepository.findAll(pageable)
                     .stream()
                     .map(order -> getOrder(order.getId()))
                     .toList();
         } else {
             pageable = PageRequest.of(page, 5);
-            return orderRepo.findAll(pageable)
+            return orderRepository.findAll(pageable)
                     .stream()
                     .map(order -> getOrder(order.getId()))
                     .toList();
@@ -122,12 +123,12 @@ public class OrderServiceImpl implements OrderService {
 
         if (page != null) {
             Pageable pageable = PageRequest.of(page, 10);
-            return orderRepo.findByStoreId(storeId, pageable)
+            return orderRepository.findByStoreId(storeId, pageable)
                     .stream()
                     .map(OrderMapper.MAPPER::toMap)
                     .toList();
         } else
-            return orderRepo.findByStoreId(storeId)
+            return orderRepository.findByStoreId(storeId)
                     .stream()
                     .map(OrderMapper.MAPPER::toMap)
                     .toList();
@@ -136,26 +137,38 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderStatus pushOrder(Long orderId) {
 
-        Order order = orderRepo.findById(orderId)
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(DataNotFoundException::new);
 
         if (order.getStatus() == OrderStatus.NEW) {
 
             order.setStatus(OrderStatus.IN_PROCESSING);
-            return orderRepo.save(order).getStatus();
+            return orderRepository.save(order).getStatus();
 
         } else
             return order.getStatus();
     }
 
     @Override
+    @Scheduled(cron = "${scheduled-start-time}")
+    public void processOrder() {
+
+        orderRepository.findAll().stream()
+                .filter(order -> order.getStatus().equals(OrderStatus.NEW))
+                .forEach(order -> {
+                    order.setStatus(OrderStatus.IN_PROCESSING);
+                    orderRepository.save(order);
+                });
+    }
+
+    @Override
     @Transactional
     public void delete(Long orderId) {
 
-        if (orderRepo.existsById(orderId)) {
+        if (orderRepository.existsById(orderId)) {
 
-            orderProductRepo.deleteByIdOrderId(orderId);
-            orderRepo.deleteById(orderId);
+            orderProductRepository.deleteByIdOrderId(orderId);
+            orderRepository.deleteById(orderId);
 
         } else
             throw new DataNotFoundException();
@@ -166,8 +179,8 @@ public class OrderServiceImpl implements OrderService {
 
         OrderProductKey key = new OrderProductKey(productQuantityRowDto.ownerId(), productQuantityRowDto.productId());
 
-        if (orderProductRepo.existsById(key))
-            orderProductRepo.deleteById(key);
+        if (orderProductRepository.existsById(key))
+            orderProductRepository.deleteById(key);
         else
             throw new DataNotFoundException();
     }
@@ -175,6 +188,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto saveOrder(Order order) {
 
-        return OrderMapper.MAPPER.toMap(orderRepo.save(order));
+        return OrderMapper.MAPPER.toMap(orderRepository.save(order));
     }
 }
