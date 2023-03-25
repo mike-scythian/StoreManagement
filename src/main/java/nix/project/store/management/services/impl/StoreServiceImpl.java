@@ -181,17 +181,22 @@ public class StoreServiceImpl implements StoreService {
 
         Order order = orderService.getOrderEntity(orderId);
 
-        Long storeId = order.getStore().getId();
+        if(order.getStatus().equals(OrderStatus.IN_PROCESSING)) {
 
-        Set<StoreStock> stockSet = order.getOrderBody().stream()
-                .map(ProductQuantityRowMapper.MAPPER::toMap)
-                .map(orderProd -> pushOrderToStore(storeId, orderProd))
-                .collect(Collectors.toSet());
+            Long storeId = order.getStore().getId();
 
-        storeStockRepository.saveAll(stockSet);
-        order.setStatus(OrderStatus.DONE);
+            Set<StoreStock> stockSet = order.getOrderBody().stream()
+                    .map(ProductQuantityRowMapper.MAPPER::toMap)
+                    .map(orderProd -> pushOrderToStore(storeId, orderProd))
+                    .collect(Collectors.toSet());
 
-        return orderService.saveOrder(order).getStatus();
+            storeStockRepository.saveAll(stockSet);
+            order.setStatus(OrderStatus.DONE);
+
+            return orderService.saveOrder(order).getStatus();
+        }
+        else
+            return order.getStatus();
     }
 
     @Override

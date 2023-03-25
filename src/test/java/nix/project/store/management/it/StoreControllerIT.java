@@ -164,7 +164,7 @@ class StoreControllerIT {
         mockMvc.perform(get(baseUrl + "/1"))
                 .andExpect(jsonPath("$.name").value("Store A"));
 
-        mockMvc.perform(patch(baseUrl + "/1?newName=ATB"));
+        mockMvc.perform(patch(baseUrl + "/update/1?newName=ATB"));
 
         mockMvc.perform(get(baseUrl + "/1"))
                 .andExpect(jsonPath("$.name").value("ATB"));

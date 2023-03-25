@@ -64,7 +64,7 @@ class UserControllerIT {
 
         String userJson = jsonMapper.writeValueAsString(userCreate);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUrl + "/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isCreated());
@@ -99,7 +99,7 @@ class UserControllerIT {
 
         String userJson = jsonMapper.writeValueAsString(userDto);
 
-        mockMvc.perform(put(baseUrl)
+        mockMvc.perform(put(baseUrl + "/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(userJson))
                 .andExpect(status().isOk())
