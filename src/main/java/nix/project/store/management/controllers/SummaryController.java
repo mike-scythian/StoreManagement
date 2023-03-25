@@ -22,7 +22,7 @@ public class SummaryController {
     SummaryService summaryService;
 
     @GetMapping
-    public ResponseEntity<List<SummaryDto>> statistic(@RequestParam(required = false) Integer page) {
+    public ResponseEntity<List<SummaryDto>> statistics(@RequestParam(required = false) Integer page) {
 
         return new ResponseEntity<>(summaryService.getReports(page), HttpStatus.CREATED);
     }

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, {useState } from 'react';
+import Footer from '../../Footer';
 
 
 const submitUrl = 'http://localhost:8181/products/new';
@@ -33,7 +34,7 @@ function NewProduct(){
 	}
 
 	return(
-		<div className = "container mt-3">
+		<div className = "container mt-3 d-flex flex-column min-vh-100">
 			<h2>Create new product</h2>
 			<form onSubmit = {handlerSubmit}>
 				<div className="row">
@@ -55,9 +56,10 @@ function NewProduct(){
 					</div>
 				</div>
 				<div className="container mt-3">
-					<button type="submit" className="btn btn-success">CREATE</button>
+					<button type="submit" className="w-50 btn btn-success">CREATE</button>
 				</div>
 			</form>
+			<Footer/>
 		</div>
 	);
 };

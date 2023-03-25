@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import ReactPaginate from "react-paginate";
+import Footer from "../../Footer";
 
 
 const baseOrderUrl = 'http://localhost:8181/orders?page=';
@@ -58,42 +59,45 @@ const handleSortByStatus = () => {
                               <td>{orderRow.store}</td>
                               <td>{orderRow.status}</td>
                               <td>
-                                <button type="button" className="btn btn-warning" onClick = {()=>navigate("/orders/"+orderRow.id)}>details</button>
+                                <button type="button" className="w-75 btn btn-warning" onClick = {()=>navigate("/orders/"+orderRow.id)}>details</button>
                               </td>
                             </tr>
                           )})
   return (
-    <div className="container w-50">
-      <h2>Orders</h2>
-       <table className="table table-dark table-striped align-middle">
-        <thead>
-           <tr>
-            <th scope="col">ID</th>
-            <th scope="col">CREATE TIME</th>
-            <th scope="col">STORE</th>
-            <th scope="col">STATUS</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-            {Rows}
-        </tbody>
-      </table>
-      <div className="container m-3 d-flex justify-content-center">
-          <ReactPaginate
-            pageCount={5}
-            marginPagesDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={"pagination"}
-            pageClassName={"page-item"}
-            pageLinkClassName={"page-link"}
-            previousClassName={"page-item"}/>
+    <div className="d-flex flex-column min-vh-100">
+        <div className="container w-50">
+          <h2>Orders</h2>
+          <table className="table table-dark table-striped align-middle">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">CREATE TIME</th>
+                <th scope="col">STORE</th>
+                <th scope="col">STATUS</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+                {Rows}
+            </tbody>
+          </table>
+          <div className="container m-3 d-flex justify-content-center">
+              <ReactPaginate
+                pageCount={3}
+                marginPagesDisplayed={5}
+                onPageChange={handlePageClick}
+                containerClassName={"pagination"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                previousClassName={"page-item"}/>
+            </div>
+            <div className="container m-3 d-flex justify-content-center">
+              <button type="button" className="w-25 btn btn-primary m-3" onClick={handleSortByDate}>Sort by date</button>
+              <button type="button" className="w-25 btn btn-primary m-3" onClick={handleSortByStatus}>Sort by status</button>
+            </div>
         </div>
-        <div className="container m-3 d-flex justify-content-center">
-          <button type="button" className="btn btn-primary m-3" onClick={handleSortByDate}>Sort by date</button>
-          <button type="button" className="btn btn-primary m-3" onClick={handleSortByStatus}>Sort by status</button>
-        </div>
-    </div>
+        <Footer />
+   </div>
 
    )
   }

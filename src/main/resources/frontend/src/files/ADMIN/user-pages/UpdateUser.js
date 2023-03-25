@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, {useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import Footer from '../../Footer';
 
 
 const baseUrl = 'http://localhost:8181/users';
@@ -49,7 +50,7 @@ function UpdateUser(){
 	}
 
 	return(
-		<div className = "container mt-3">
+		<div className = "container mt-3 d-flex flex-column min-vh-100">
 			<h2>Update user</h2>
 			<form onSubmit = {handlerUpdate}>
 				<div className="row">
@@ -69,9 +70,10 @@ function UpdateUser(){
 					</div>
 				</div>
 				<div className="container mt-3">
-					<button type="submit" className="btn btn-success">UPDATE</button>
+					<button type="submit" className="w-50 btn btn-success">UPDATE</button>
 				</div>
 			</form>
+			< Footer />
 		</div>
 	);
 };

@@ -6,7 +6,7 @@ export default function TopProducts(topicData){
         
         <div className="container w-50">
             <h4>Top Products</h4>
-            <table className="table table-striped align-middle">
+            <table className="table text-center">
                 <thead>
                     <tr className="table-primary">
                         <th scope="col">ID</th>

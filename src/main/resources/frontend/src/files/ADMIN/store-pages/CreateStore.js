@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, {useState } from 'react';
+import Footer from '../../Footer';
 
 
 const submitUrl = 'http://localhost:8181/stores/new?storeName=';
@@ -27,7 +28,7 @@ function CreateStore(){
 	}
 
 	return(
-		<div className = "container mt-3">
+		<div className = "container mt-3 d-flex flex-column min-vh-100">
 			<h2>Create new store</h2>
 			<form onSubmit = {handlerSubmit}>
 				<div className="row">
@@ -42,6 +43,7 @@ function CreateStore(){
 					<button type="submit" className="btn btn-success">CREATE</button>
 				</div>
 			</form>
+			< Footer />
 		</div>
 	);
 };

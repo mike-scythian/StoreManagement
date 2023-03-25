@@ -3,6 +3,7 @@ import ReactPaginate from "react-paginate";
 import React, { useEffect, useState } from "react";
 import SummaryBody from "./SummaryBody";
 import { useNavigate, useParams } from "react-router-dom";
+import Footer from "../../Footer";
 
 const baseUrl = 'http://localhost:8181/summary/stores/'
 const prodUrl = 'http://localhost:8181/products'
@@ -46,7 +47,7 @@ const SummaryByStore =() => {
 
     const handlePageClick = (page) =>{
         console.log("click")
-        axios(baseUrl + "?page=" + page.selected)
+        axios(baseUrl + params.id + "?page=" + page.selected)
             .then(response => {
               console.log(response.data)
               setSummary(response.data)
@@ -55,30 +56,33 @@ const SummaryByStore =() => {
       }  
 
     return(
-        <div className="container mt-3 w-50">
-            <table className="table table-dark table-striped align-middle">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Product</th>
-                        <th scope="col">Payment</th>
-                        <th scope="col">Time</th>
-                        <th scope="col">Store</th>
-                    </tr>
-                </thead>
-                <SummaryBody data={summary}/>
-            </table>
-            <div className="container m-3 d-flex justify-content-center">
-                <ReactPaginate
-                    pageCount={3}
-                    marginPagesDisplayed={5}
-                    onPageChange={handlePageClick}
-                    containerClassName={"pagination"}
-                    pageClassName={"page-item"}
-                    pageLinkClassName={"page-link"}
-                    previousClassName={"page-item"} />
+        <div className="d-flex flex-column min-vh-100">
+            <div className="container mt-3 w-50">
+                <table className="table table-dark table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Payment</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">Store</th>
+                        </tr>
+                    </thead>
+                    <SummaryBody data={summary}/>
+                </table>
+                <div className="container m-3 d-flex justify-content-center">
+                    <ReactPaginate
+                        pageCount={3}
+                        marginPagesDisplayed={5}
+                        onPageChange={handlePageClick}
+                        containerClassName={"pagination"}
+                        pageClassName={"page-item"}
+                        pageLinkClassName={"page-link"}
+                        previousClassName={"page-item"} />
+                </div>
+                <button className='btn btn-info m-3' onClick={() => nav(-1)}>BACK</button>
             </div>
-            <button className='btn btn-info m-3' onClick={() => nav(-1)}>BACK</button>
+            <Footer />
         </div>
     )
 }

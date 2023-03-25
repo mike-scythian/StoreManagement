@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import SummaryBody from "./SummaryBody";
 import TopProducts from "./TopProducts";
 import { useNavigate } from "react-router-dom";
+import Footer from "../../Footer";
 
 const baseUrl = 'http://localhost:8181/summary'
 const prodUrl = 'http://localhost:8181/products'
@@ -98,16 +99,20 @@ const Summary =() => {
 
     function handlerByProduct(){
         if(dateForProduct.start === '' || dateForProduct.end === '')
-            nav("/summary/products/"+productId.productId)
+            nav("/summary/products/" + productId.productId + "&page=" + page)
         else
-            nav("/summary/products/by-period/"+productId.productId+"?start="+dateForProduct.start+"&end="+dateForProduct.end) 
+            nav("/summary/products/by-period/" + productId.productId + 
+                 "?start=" + dateForProduct.start +
+                  "&end=" + dateForProduct.end) 
     }
 
     function handlerByStore(){
         if(dateForStore.start === '' || dateForStore.end === '')
-            nav("/summary/stores/"+storeId.storeId)
+            nav("/summary/stores/" + storeId.storeId)
         else
-            nav("/summary/stores/by-period/"+storeId.storeId+"?start="+dateForStore.start+"&end="+dateForStore.end) 
+            nav("/summary/stores/by-period/" + storeId.storeId + 
+                "?start=" + dateForStore.start + 
+                "&end=" + dateForStore.end )
     }
 
     const handlePageClick = (page) =>{
@@ -131,13 +136,13 @@ const Summary =() => {
             )})  
 
     return(
-        <div className="container mt-3">
+        <div className="container mt-3 d-flex flex-column min-vh-100">
 
             <div className="container">
                 <div className="row">
                     <div className="col">
                         <h4>Statistic</h4>
-                        <table className="table table-dark table-striped align-middle">
+                        <table className="table table-dark text-center">
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
@@ -170,13 +175,13 @@ const Summary =() => {
                 <div className="container m-2">
                     <div className="row justify-content-start">
                         <div className="col-lg-3 col-sm-6 mt-4">
-                            <select className="custom-select mt-1" name="storeId" onChange={handlerInputStore}>
+                            <select className="w-75 custom-select mt-1" name="storeId" onChange={handlerInputStore}>
                                 <option></option>
                                 {StoreList}
                             </select>
                         </div>    
                         <div className="col-lg-3 col-sm-6 mt-4">
-                            <button className="btn-sm btn-success" type="button" onClick={()=>handlerByStore()}>BY STORE</button>
+                            <button className="w-75 btn-sm btn-success" type="button" onClick={()=>handlerByStore()}>BY STORE</button>
                         </div>
                         <div className="col-lg-3 col-sm-6">
                             <label htmlFor="startDate">Start</label>
@@ -193,13 +198,13 @@ const Summary =() => {
                 <div className="container m-2">
                     <div className="row justify-content-start">
                         <div className="col-lg-3 col-sm-6 mt-4">
-                            <select className="custom-select mt-2" name="productId" onChange={handlerInputProduct}>
+                            <select className="w-75 custom-select mt-2" name="productId" onChange={handlerInputProduct}>
                                 <option></option>
                                 {ProductList}
                             </select>
                         </div>    
                         <div className="col-lg-3 col-sm-6 mt-4">
-                            <button className="btn-sm btn-success" type="button" onClick={()=>handlerByProduct()}>BY PRODUCT</button>
+                            <button className=" w-75 btn-sm btn-success" type="button" onClick={()=>handlerByProduct()}>BY PRODUCT</button>
                         </div>
                         <div className="col-lg-3 col-sm-6">
                             <label htmlFor="startDate">Start</label>
@@ -214,6 +219,7 @@ const Summary =() => {
                     </div>        
                 </div>
             </div>
+            <Footer />
         </div>
     )
 }

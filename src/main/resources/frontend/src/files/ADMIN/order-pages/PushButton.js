@@ -17,7 +17,7 @@ export default function PushButton(id){
 
     return(
         <>
-            <button type="button" className="btn btn-success m-3" onClick={() => pushClick()}>PUSH</button>
+            <button type="button" className="w-50 btn btn-success m-3" onClick={() => pushClick()}>PUSH</button>
         </>
     )
 

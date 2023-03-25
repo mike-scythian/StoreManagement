@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {useNavigate, useParams} from "react-router-dom";
 import PushButton from "./PushButton";
+import Footer from "../../Footer"
 
 
 
@@ -33,24 +34,27 @@ const OrderDetails = (flag) => {
             </tr>
   )})        
   return (
-    <div className="container w-50">
-        <h2>Order № {orderId.id}</h2>
-        <table className="table table-dark table-striped align-middle">
-          <thead>
-            <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Type</th>
-              <th scope="col">Quantity</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Rows}
-          </tbody>
-        </table>
-        <div className="container m-3 d-flex justify-content-center">
-          <PushButton id = {orderId.id}/>
-        </div>
+    <div className="d-flex flex-column min-vh-100">
+      <div className="container w-50">
+          <h2>Order № {orderId.id}</h2>
+          <table className="table table-dark text-center">
+            <thead>
+              <tr>
+                <th scope="col">Product</th>
+                <th scope="col">Type</th>
+                <th scope="col">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Rows}
+            </tbody>
+          </table>
+          <div className="container m-3 d-flex justify-content-center">
+            <PushButton id = {orderId.id}/>
+          </div>
       </div>
+        <Footer />
+    </div>
       
 
    )
