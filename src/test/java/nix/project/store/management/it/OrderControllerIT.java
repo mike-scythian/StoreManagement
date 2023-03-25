@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -26,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = "app.scheduling.enable=false")
 @AutoConfigureMockMvc
 class OrderControllerIT {
 
@@ -52,7 +54,7 @@ class OrderControllerIT {
 
         String requestJson = jsonMapper.writeValueAsString(request);
 
-        mockMvc.perform(post(baseUrl + "/rows")
+        mockMvc.perform(post(baseUrl + "/rows/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isCreated())
@@ -92,13 +94,13 @@ class OrderControllerIT {
         assertThat(orderList.size()).isEqualTo(3);
     }
 
-    @WithMockUser(username = "admin@email.com", password = "Q", authorities = {"ROLE_ADMIN"})
+    @WithMockUser(username = "user@email.com", password = "Q", authorities = {"ROLE_USER"})
     @Sql(value = "/db-test/order-test-db-setup-before.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(value = "/db-test/order-test-db-setup-after.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     @Test
     void shouldGetOrdersByStore() throws Exception {
 
-        MvcResult response = mockMvc.perform(get(baseUrl + "/stores/1"))
+        MvcResult response = mockMvc.perform(get(baseUrl + "/store/1"))
                 .andExpect(status().isOk())
                 .andReturn();
 

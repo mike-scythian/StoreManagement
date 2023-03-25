@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = "app.scheduling.enable=false")
 @AutoConfigureMockMvc
 class ProductControllerIT {
 
@@ -63,7 +65,7 @@ class ProductControllerIT {
 
         String productJson = jsonMapper.writeValueAsString(testProduct);
 
-        mockMvc.perform(post(baseUrl)
+        mockMvc.perform(post(baseUrl + "/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productJson))
                 .andExpect(status().isCreated());
@@ -78,7 +80,7 @@ class ProductControllerIT {
 
         String productJson = jsonMapper.writeValueAsString(testProduct);
 
-        mockMvc.perform(put(baseUrl + "/10")
+        mockMvc.perform(put(baseUrl + "/update/10")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(productJson))
                 .andExpect(status().isOk())

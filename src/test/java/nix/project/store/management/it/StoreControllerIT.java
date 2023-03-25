@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = "app.scheduling.enable=false")
 @AutoConfigureMockMvc
 class StoreControllerIT {
 
@@ -46,7 +48,7 @@ class StoreControllerIT {
 
         String testStoreName = "ATB";
 
-        mockMvc.perform(post(baseUrl + "?storeName=" + testStoreName))
+        mockMvc.perform(post(baseUrl + "/new?storeName=" + testStoreName))
                 .andExpect(status().isCreated());
     }
 
@@ -229,7 +231,7 @@ class StoreControllerIT {
 
         try {
 
-            String response = mvc.perform(get("/orders/stores/2"))
+            String response = mvc.perform(get("/orders/store/2"))
                     .andExpect(status().isOk())
                     .andReturn()
                     .getResponse()
