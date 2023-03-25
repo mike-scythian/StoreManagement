@@ -12,13 +12,13 @@ public interface SummaryService {
 
     List<SummaryDto> getReports(Integer page);
 
-    List<SummaryDto> getByStore(Long storeId);
+    List<SummaryDto> getByStore(Long storeId, Integer page);
 
-    List<SummaryDto> getByProduct(Long productId);
+    List<SummaryDto> getByProduct(Long productId, Integer page);
 
-    List<SummaryDto> getByStoreForPeriod(Long storeId, LocalDateTime startDate, LocalDateTime finishDate);
+    List<SummaryDto> getByStoreForPeriod(Long storeId, LocalDateTime startDate, LocalDateTime finishDate, Integer page);
 
-    List<SummaryDto> getByProductForPeriod(Long productId, LocalDateTime startDate, LocalDateTime finishDate);
+    List<SummaryDto> getByProductForPeriod(Long productId, LocalDateTime startDate, LocalDateTime finishDate, Integer page);
 
     List<ProductBySaleDto> getTopTenProducts();
 }

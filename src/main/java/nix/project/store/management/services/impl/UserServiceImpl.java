@@ -60,12 +60,11 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getUsers(Integer page) {
 
         if (page != null) {
-            Pageable pageable = PageRequest.of(page, 5);
+            Pageable pageable = PageRequest.of(page, 10);
             return userRepository.findAll(pageable).stream()
                     .map(UserMapper.MAPPER::toMap)
                     .toList();
-        }
-        else
+        } else
             return userRepository.findAll().stream()
                     .map(UserMapper.MAPPER::toMap)
                     .toList();

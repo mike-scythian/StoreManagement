@@ -37,6 +37,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final ProductService productService;
 
+    private final int PAGE = 10;
+
 
     @Override
     public OrderProductKey addRow(ProductQuantityRowDto productQuantityRowDto) {
@@ -103,14 +105,14 @@ public class OrderServiceImpl implements OrderService {
             page = 0;
 
         if (sortParam != null) {
-            pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.ASC, sortParam));
+            pageable = PageRequest.of(page, PAGE, Sort.by(Sort.Direction.ASC, sortParam));
 
             return orderRepository.findAll(pageable)
                     .stream()
                     .map(order -> getOrder(order.getId()))
                     .toList();
         } else {
-            pageable = PageRequest.of(page, 5);
+            pageable = PageRequest.of(page, PAGE);
             return orderRepository.findAll(pageable)
                     .stream()
                     .map(order -> getOrder(order.getId()))
@@ -122,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> getOrdersByStore(Long storeId, Integer page) {
 
         if (page != null) {
-            Pageable pageable = PageRequest.of(page, 10);
+            Pageable pageable = PageRequest.of(page, PAGE);
             return orderRepository.findByStoreId(storeId, pageable)
                     .stream()
                     .map(OrderMapper.MAPPER::toMap)

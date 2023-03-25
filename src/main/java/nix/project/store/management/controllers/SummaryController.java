@@ -22,47 +22,53 @@ public class SummaryController {
     SummaryService summaryService;
 
     @GetMapping
-    public ResponseEntity<List<SummaryDto>> statistic(@RequestParam(required = false)Integer page){
+    public ResponseEntity<List<SummaryDto>> statistic(@RequestParam(required = false) Integer page) {
 
         return new ResponseEntity<>(summaryService.getReports(page), HttpStatus.CREATED);
     }
 
     @GetMapping("/stores/{id}")
-    public ResponseEntity<List<SummaryDto>> getReportsByStore(@PathVariable long id){
+    public ResponseEntity<List<SummaryDto>> getReportsByStore(@PathVariable long id,
+                                                              @RequestParam(required = false) Integer page) {
 
-        return new ResponseEntity<>(summaryService.getByStore(id), HttpStatus.CREATED);
+        return new ResponseEntity<>(summaryService.getByStore(id, page), HttpStatus.CREATED);
     }
 
     @GetMapping("/products/{id}")
-    public ResponseEntity<List<SummaryDto>> getReportsByProduct(@PathVariable long id){
+    public ResponseEntity<List<SummaryDto>> getReportsByProduct(@PathVariable long id,
+                                                                @RequestParam(required = false) Integer page) {
 
-        return new ResponseEntity<>(summaryService.getByProduct(id), HttpStatus.CREATED);
+        return new ResponseEntity<>(summaryService.getByProduct(id, page), HttpStatus.CREATED);
     }
 
     @GetMapping("/stores/by-period/{id}")
     public ResponseEntity<List<SummaryDto>> getReportsFromStoreByPeriod(@PathVariable long id,
                                                                         @RequestParam LocalDate start,
-                                                                        @RequestParam LocalDate end){
+                                                                        @RequestParam LocalDate end,
+                                                                        @RequestParam(required = false) Integer page) {
 
         return new ResponseEntity<>(summaryService.getByStoreForPeriod(
                 id,
                 start.atTime(LocalTime.parse("00:00:00")),
-                end.atTime(LocalTime.parse("23:59:59"))), HttpStatus.CREATED);
+                end.atTime(LocalTime.parse("23:59:59")),
+                page), HttpStatus.CREATED);
     }
 
     @GetMapping("/products/by-period/{id}")
     public ResponseEntity<List<SummaryDto>> getReportsByProductByPeriod(@PathVariable long id,
                                                                         @RequestParam LocalDate start,
-                                                                        @RequestParam LocalDate end){
+                                                                        @RequestParam LocalDate end,
+                                                                        @RequestParam(required = false) Integer page) {
 
         return new ResponseEntity<>(summaryService.getByProductForPeriod(
                 id,
                 start.atTime(LocalTime.parse("00:00:00")),
-                end.atTime(LocalTime.parse("23:59:59"))), HttpStatus.CREATED);
+                end.atTime(LocalTime.parse("23:59:59")),
+                page), HttpStatus.CREATED);
     }
 
     @GetMapping("/products/top")
-    public ResponseEntity<List<ProductBySaleDto>> getTopTenProducts(){
+    public ResponseEntity<List<ProductBySaleDto>> getTopTenProducts() {
 
         return new ResponseEntity<>(summaryService.getTopTenProducts(), HttpStatus.CREATED);
     }

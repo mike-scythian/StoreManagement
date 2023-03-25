@@ -122,7 +122,7 @@ public class StoreServiceImpl implements StoreService {
     public List<StoreDto> getStores(Integer page) {
 
         if(page != null) {
-            Pageable pageable = PageRequest.of(page, 5);
+            Pageable pageable = PageRequest.of(page, 10);
             return storeRepository.findAll(pageable).stream()
                     .map(StoreMapper.MAPPER::toMap)
                     .toList();

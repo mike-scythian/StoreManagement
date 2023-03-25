@@ -15,9 +15,9 @@ public class UserEntityUserDetails implements UserDetails {
     private final String userEmail;
     private final String userPassword;
 
-    private final List <GrantedAuthority> authorities;
+    private final List<GrantedAuthority> authorities;
 
-    public UserEntityUserDetails(UserEntity user){
+    public UserEntityUserDetails(UserEntity user) {
 
         this.userEmail = user.getEmail();
         this.userPassword = user.getPassword();

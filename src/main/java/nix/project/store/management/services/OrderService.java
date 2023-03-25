@@ -14,13 +14,14 @@ public interface OrderService {
     OrderProductKey addRow(ProductQuantityRowDto productQuantityRowDto);
 
     OrderDto getOrder(Long orderId);
+
     List<ProductRowDto> getOrderBody(Long orderId);
 
     Order getOrderEntity(Long orderId);
 
     List<OrderDto> getOrders(Integer page, String sortParam);
 
-    List <OrderDto> getOrdersByStore(Long storeId, Integer page);
+    List<OrderDto> getOrdersByStore(Long storeId, Integer page);
 
     void delete(Long orderId);
 
