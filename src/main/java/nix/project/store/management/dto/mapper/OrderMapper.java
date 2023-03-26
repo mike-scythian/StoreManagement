@@ -15,12 +15,12 @@ public interface OrderMapper {
 
     OrderMapper MAPPER = Mappers.getMapper(OrderMapper.class);
 
-    default OrderDto toMap(Order order){
+    default OrderDto toMap(Order order) {
 
-        if(order == null)
+        if (order == null)
             return null;
 
-        if(order.getOrderBody() == null)
+        if (order.getOrderBody() == null)
 
             order.setOrderBody(Collections.EMPTY_SET);
 
@@ -33,7 +33,7 @@ public interface OrderMapper {
                         order.getOrderBody()
                                 .stream()
                                 .collect(Collectors
-                                        .toMap(OrderProduct::getProductId,OrderProduct::getQuantity))))
+                                        .toMap(OrderProduct::getProductId, OrderProduct::getQuantity))))
                 .build();
     }
 }

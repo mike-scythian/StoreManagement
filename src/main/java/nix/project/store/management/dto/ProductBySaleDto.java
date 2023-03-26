@@ -4,5 +4,4 @@ public record ProductBySaleDto(
         Long id,
         String name,
         Double summaryIncome
-) {
-}
+) {}

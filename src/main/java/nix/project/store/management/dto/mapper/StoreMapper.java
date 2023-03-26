@@ -15,12 +15,12 @@ public interface StoreMapper {
 
     StoreMapper MAPPER = Mappers.getMapper(StoreMapper.class);
 
-    default StoreDto toMap(Store store){
+    default StoreDto toMap(Store store) {
 
-        if(store == null)
+        if (store == null)
             return null;
 
-        if(store.getStoreStock() == null)
+        if (store.getStoreStock() == null)
             store.setStoreStock(Collections.EMPTY_SET);
 
         return StoreDto.builder()
@@ -36,7 +36,7 @@ public interface StoreMapper {
                         store.getStoreStock()
                                 .stream()
                                 .collect(Collectors
-                                        .toMap(k->ProductMapper.MAPPER.toMap(k.getProduct()),StoreStock::getLeftovers))))
+                                        .toMap(k -> ProductMapper.MAPPER.toMap(k.getProduct()), StoreStock::getLeftovers))))
                 .build();
     }
 }

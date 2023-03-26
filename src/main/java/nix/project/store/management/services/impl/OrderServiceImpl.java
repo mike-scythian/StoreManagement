@@ -8,6 +8,7 @@ import nix.project.store.management.dto.ProductQuantityRowDto;
 import nix.project.store.management.dto.ProductRowDto;
 import nix.project.store.management.dto.mapper.OrderMapper;
 import nix.project.store.management.dto.mapper.ProductMapper;
+import nix.project.store.management.exceptions.CannotOrderModifierException;
 import nix.project.store.management.exceptions.DataNotFoundException;
 import nix.project.store.management.entities.Order;
 import nix.project.store.management.entities.OrderProduct;
@@ -37,7 +38,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final ProductService productService;
 
-    private final int PAGE = 10;
+    private final static int PAGE = 10;
 
 
     @Override
@@ -46,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(productQuantityRowDto.ownerId()).orElseThrow(DataNotFoundException::new);
 
         if (order.getStatus() == OrderStatus.DONE)
-            throw new RuntimeException();
+            throw new CannotOrderModifierException();
 
         OrderProduct orderRow = new OrderProduct();
         Product product = ProductMapper.MAPPER.toEntityMap(productService.getProduct(productQuantityRowDto.productId()));
@@ -105,7 +106,7 @@ public class OrderServiceImpl implements OrderService {
             page = 0;
 
         if (sortParam != null) {
-            pageable = PageRequest.of(page, PAGE, Sort.by(Sort.Direction.ASC, sortParam));
+            pageable = PageRequest.of(page, PAGE, Sort.by(Sort.Direction.DESC, sortParam));
 
             return orderRepository.findAll(pageable)
                     .stream()

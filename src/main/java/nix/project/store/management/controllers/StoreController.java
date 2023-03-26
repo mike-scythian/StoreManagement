@@ -27,13 +27,6 @@ public class StoreController {
         return new ResponseEntity<>(storeService.create(storeName), HttpStatus.CREATED);
     }
 
-    @PostMapping("/orders/{storeId}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<OrderDto> createOrder(@PathVariable long storeId) {
-
-        return new ResponseEntity<>(storeService.createEmptyOrder(storeId), HttpStatus.CREATED);
-    }
-
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<List<StoreDto>> getAllStores(@RequestParam(required = false) Integer page) {
@@ -47,24 +40,10 @@ public class StoreController {
         return new ResponseEntity<>(storeService.getStore(id), HttpStatus.OK);
     }
 
-    @GetMapping("/sellers/{id}")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Set<UserDto>> getSellers(@PathVariable long id) {
-
-        return new ResponseEntity<>(storeService.getSellers(id), HttpStatus.OK);
-    }
-
     @GetMapping("/stocks/{id}")
     public ResponseEntity<List<ProductRowDto>> getLeftovers(@PathVariable long id) {
 
         return new ResponseEntity<>(storeService.getLeftovers(id), HttpStatus.OK);
-    }
-
-    @PutMapping("/accept/{id}")
-    @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<OrderStatus> acceptOrder(@PathVariable long id) {
-
-        return new ResponseEntity<>(storeService.acceptOrder(id), HttpStatus.ACCEPTED);
     }
 
     @PatchMapping("/update/{id}")
@@ -74,6 +53,27 @@ public class StoreController {
         storeService.update(id, newName);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/orders/{storeId}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<OrderDto> createOrder(@PathVariable long storeId) {
+
+        return new ResponseEntity<>(storeService.createEmptyOrder(storeId), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/accept/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
+    public ResponseEntity<OrderStatus> acceptOrder(@PathVariable long id) {
+
+        return new ResponseEntity<>(storeService.acceptOrder(id), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/sellers/{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Set<UserDto>> getSellers(@PathVariable long id) {
+
+        return new ResponseEntity<>(storeService.getSellers(id), HttpStatus.OK);
     }
 
     @PatchMapping("/sale")

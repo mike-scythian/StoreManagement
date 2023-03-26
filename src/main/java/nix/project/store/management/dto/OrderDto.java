@@ -13,14 +13,12 @@ import java.util.HashMap;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderDto{
-    private  Long id;
+public class OrderDto {
+    private Long id;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private  LocalDateTime createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
     private Long store;
-    private HashMap<Long,Double> products;
+    private HashMap<Long, Double> products;
     private OrderStatus status;
-
-
 }

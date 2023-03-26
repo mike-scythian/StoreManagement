@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface StoreStockRepository extends JpaRepository<StoreStock, StoreStockKey> {
+    boolean existsByIdProductId(Long productId);
     List<StoreStock> findByStoreId(Long id);
 
 

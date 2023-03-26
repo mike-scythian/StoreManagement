@@ -6,5 +6,4 @@ public record ProductRowDto(
         String productName,
         String productType,
         Double quantity
-) {
-}
+) {}

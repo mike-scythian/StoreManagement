@@ -7,6 +7,8 @@ import nix.project.store.management.exceptions.DataNotFoundException;
 import nix.project.store.management.exceptions.ValueExistsAlreadyException;
 import nix.project.store.management.entities.Product;
 import nix.project.store.management.repositories.ProductRepository;
+import nix.project.store.management.repositories.StoreRepository;
+import nix.project.store.management.repositories.StoreStockRepository;
 import nix.project.store.management.services.ProductService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final StoreStockRepository storeStockRepository;
     private static final ProductMapper mapper = ProductMapper.MAPPER;
 
 
@@ -69,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void delete(Long productId) {
 
-        if (productRepository.existsById(productId))
+        if (productRepository.existsById(productId) && !checkStocks(productId))
             productRepository.deleteById(productId);
         else
             throw new DataNotFoundException();
@@ -99,6 +102,10 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(DataNotFoundException::new);
 
         return mapper.toMap(product);
+    }
+
+    private boolean checkStocks(Long id){
+        return storeStockRepository.existsByIdProductId(id);
     }
 
 }

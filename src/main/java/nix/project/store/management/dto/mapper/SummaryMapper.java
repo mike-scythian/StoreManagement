@@ -11,5 +11,6 @@ public interface SummaryMapper {
     SummaryMapper MAPPER = Mappers.getMapper(SummaryMapper.class);
 
     SummaryDto toMap(Summary summary);
+
     Summary toEntityMap(SummaryDto summaryDto);
 }

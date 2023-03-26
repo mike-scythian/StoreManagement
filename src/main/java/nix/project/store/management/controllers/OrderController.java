@@ -25,35 +25,34 @@ public class OrderController {
 
     @PostMapping("/rows/{orderId}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity <OrderProductKey> createRowInOrder(@RequestBody ProductQuantityRowDto productDto){
+    public ResponseEntity<OrderProductKey> createRowInOrder(@RequestBody ProductQuantityRowDto productDto) {
 
         return new ResponseEntity<>(orderService.addRow(productDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity <List<ProductRowDto>> findOrder(@PathVariable long id)  {
+    public ResponseEntity<List<ProductRowDto>> findOrder(@PathVariable long id) {
 
         return new ResponseEntity<>(orderService.getOrderBody(id), HttpStatus.OK);
     }
 
     @GetMapping("/info/{id}")
-    public ResponseEntity <OrderDto> getOrder(@PathVariable long id){
+    public ResponseEntity<OrderDto> getOrder(@PathVariable long id) {
 
         return new ResponseEntity<>(orderService.getOrder(id), HttpStatus.OK);
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity <List<OrderDto>> findOrders(@RequestParam(required = false) Integer page,
-                                                      @RequestParam(required = false) String sortParam){
+    public ResponseEntity<List<OrderDto>> findOrders(@RequestParam(required = false) Integer page,
+                                                     @RequestParam(required = false) String sortParam) {
 
-        return  new ResponseEntity<>(orderService.getOrders(page, sortParam), HttpStatus.OK);
+        return new ResponseEntity<>(orderService.getOrders(page, sortParam), HttpStatus.OK);
     }
 
     @GetMapping("/store/{id}")
-    public ResponseEntity <List<OrderDto>> findOrdersByStore(@PathVariable long id,
-                                                             @RequestParam(required = false) Integer page){
-
+    public ResponseEntity<List<OrderDto>> findOrdersByStore(@PathVariable long id,
+                                                            @RequestParam(required = false) Integer page) {
 
 
         return new ResponseEntity<>(orderService.getOrdersByStore(id, page), HttpStatus.OK);
@@ -61,21 +60,21 @@ public class OrderController {
 
     @PutMapping("/push/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity <OrderStatus> pushOrder(@PathVariable long id){
+    public ResponseEntity<OrderStatus> pushOrder(@PathVariable long id) {
 
         return new ResponseEntity<>(orderService.pushOrder(id), HttpStatus.ACCEPTED);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity <Void> deleteOrder(@PathVariable long id){
+    public ResponseEntity<Void> deleteOrder(@PathVariable long id) {
 
         orderService.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/rows")
-    public ResponseEntity <Void> deleteOrderRow(@RequestBody ProductQuantityRowDto productQuantityRowDto){
+    public ResponseEntity<Void> deleteOrderRow(@RequestBody ProductQuantityRowDto productQuantityRowDto) {
 
         orderService.deleteRow(productQuantityRowDto);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
